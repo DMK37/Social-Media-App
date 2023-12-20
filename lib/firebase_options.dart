@@ -66,6 +66,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '982572736525',
     projectId: 'social-media-app-29487',
     storageBucket: 'social-media-app-29487.appspot.com',
+    iosClientId: '982572736525-9iiks0n54stlp3fo5mnpju51365pfvt7.apps.googleusercontent.com',
     iosBundleId: 'com.example.socialMedia',
   );
 
@@ -75,6 +76,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '982572736525',
     projectId: 'social-media-app-29487',
     storageBucket: 'social-media-app-29487.appspot.com',
+    iosClientId: '982572736525-66ju3keq7qa23vtm6tv53e2gdheumhis.apps.googleusercontent.com',
     iosBundleId: 'com.example.socialMedia.RunnerTests',
   );
 }
