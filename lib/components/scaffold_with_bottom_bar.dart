@@ -15,14 +15,14 @@ class ScaffoldWithBottomBar extends StatelessWidget {
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4),
-        child: GNav(
+          padding: const EdgeInsets.only(
+              left: 15.0, right: 15.0, top: 7, bottom: 20),
+          child: GNav(
             gap: 8,
-            color: Colors.grey[600],
-            activeColor: Colors.black,
-            hoverColor: Colors.grey[100]!,
-            iconSize: 20,
+            hoverColor: Theme.of(context).bottomAppBarTheme.shadowColor!,
+            iconSize: 25,
             duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.all(15.0),
             tabs: const [
               GButton(icon: Icons.home, text: 'Home'),
               GButton(icon: Icons.search, text: 'Search'),
@@ -32,11 +32,33 @@ class ScaffoldWithBottomBar extends StatelessWidget {
                 text: 'Profile',
               ),
             ],
-            onTabChange: (int index) => _onTap(context, index),)),
+            selectedIndex: _calculateSelectedIndex(context),
+            onTabChange: (int index) => _onTap(index),
+          )),
     );
   }
 
-  void _onTap(BuildContext context, int index) {
+  static int _calculateSelectedIndex(BuildContext context) {
+    final String location = GoRouterState.of(context).uri.toString();
+    if (location == '/') {
+      return 0;
+    }
+    if (location.startsWith('/search')) {
+      return 1;
+    }
+    if (location.startsWith('/create')) {
+      return 2;
+    }
+    if (location.startsWith('/profile')) {
+      return 3;
+    }
+    return 0;
+  }
+
+  void _onTap(int index) {
+    if (navigationShell.currentIndex == index) {
+      print("same index");
+    }
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,

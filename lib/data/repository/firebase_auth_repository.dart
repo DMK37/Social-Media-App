@@ -1,22 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:social_media/data/models/user_model.dart';
 import 'package:social_media/data/repository/auth_repository.dart';
+import 'package:social_media/data/repository/user_repository.dart';
 
 class FirebaseAuthRepository extends AuthRepository {
   final _auth = FirebaseAuth.instance;
+  final _user = UserRepository();
 
   @override
-  UserModel? currentUser() {
+  Future<UserModel?> currentUser() async {
     final User? firebaseUser = _auth.currentUser;
     if (firebaseUser != null) {
-      return UserModel(
-          userId: firebaseUser.uid,
-          email: firebaseUser.email ?? '',
-          username: firebaseUser.email ?? '',
-          name: firebaseUser.email ?? '');
+      return await _user.getUser(firebaseUser.uid);
     }
     return null;
   }
@@ -25,7 +22,7 @@ class FirebaseAuthRepository extends AuthRepository {
   Future<void> login(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       //print(e.toString());
       rethrow;
     }
@@ -42,22 +39,23 @@ class FirebaseAuthRepository extends AuthRepository {
   }
 
   @override
-  Future<UserModel?> signUp(
-      String email, String password, String username, String name) async {
+  Future<UserModel?> signUp(String email, String password, String username,
+      String firstName, String lastName) async {
     try {
       final UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
       final User? firebaseUser = userCredential.user;
       if (firebaseUser != null) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .add({'name': name, 'username': username, 'email': email});
-        return UserModel(
+        UserModel user = UserModel(
             userId: firebaseUser.uid,
             email: firebaseUser.email ?? '',
             username: username,
-            name: name);
+            firstName: firstName,
+            lastName: lastName,
+            about: '');
+        _user.createUser(user);
+        return user;
       }
     } catch (e) {
       print(e.toString());
@@ -92,15 +90,14 @@ class FirebaseAuthRepository extends AuthRepository {
   @override
   Future<void> signInWithFacebook() async {
     //await FacebookAuth.instance.logOut();
-    final LoginResult loginResult =
-        await FacebookAuth.instance.login();
+    final LoginResult loginResult = await FacebookAuth.instance.login();
 
     // Create a credential from the access token
     final OAuthCredential facebookAuthCredential =
         FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
     // Once signed in, return the UserCredential
-    final res = await _auth.signInWithCredential(facebookAuthCredential);
-    print(res);
+    await _auth.signInWithCredential(facebookAuthCredential);
+    //print(res);
   }
 }

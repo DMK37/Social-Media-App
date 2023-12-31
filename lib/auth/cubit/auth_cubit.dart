@@ -8,7 +8,8 @@ class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._authRepository) : super(AuthInitialState());
 
   Future<void> isAuthenticated() async {
-    final user = _authRepository.currentUser();
+    emit(AuthLoadingState());
+    final user = await _authRepository.currentUser();
     if (user == null) {
       emit(UnauthenticatedState());
     } else {
@@ -16,12 +17,12 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> signUp(
-      String email, String password, String name, String username) async {
+  Future<void> signUp(String email, String password, String firstName,
+      String lastName, String username) async {
     try {
       emit(AuthLoadingState());
-      UserModel? user =
-          await _authRepository.signUp(email, password, username, name);
+      UserModel? user = await _authRepository.signUp(
+          email, password, username, firstName, lastName);
       if (user != null) {
         emit(AuthenticatedState(user: user));
       } else {
@@ -36,16 +37,14 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoadingState());
       await _authRepository.login(email, password);
-      UserModel? currentUser = _authRepository.currentUser();
+      UserModel? currentUser = await _authRepository.currentUser();
 
       if (currentUser != null) {
         emit(AuthenticatedState(user: currentUser));
-        
       } else {
         emit(AuthFailureState(errorMessage: 'login user failed'));
       }
     } catch (e) {
-      
       emit(AuthFailureState(errorMessage: e.toString()));
     }
   }
@@ -65,7 +64,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoadingState());
       await _authRepository.signInWithGoogle();
-      UserModel? currentUser = _authRepository.currentUser();
+      UserModel? currentUser = await _authRepository.currentUser();
       if (currentUser != null) {
         emit(AuthenticatedState(user: currentUser));
       } else {
@@ -80,7 +79,7 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoadingState());
       await _authRepository.signInWithFacebook();
-      UserModel? currentUser = _authRepository.currentUser();
+      UserModel? currentUser = await _authRepository.currentUser();
       if (currentUser != null) {
         emit(AuthenticatedState(user: currentUser));
       } else {

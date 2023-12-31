@@ -3,10 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
+import 'package:social_media/components/login_button.dart';
 import 'package:social_media/components/my_button.dart';
 import 'package:social_media/components/my_text_field.dart';
-import 'package:social_media/components/square_tile.dart';
-import 'package:social_media/router_config.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -18,7 +17,9 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPagePageState extends State<SignUpPage> {
   final usernameController = TextEditingController();
 
-  final nameController = TextEditingController();
+  final firstNameController = TextEditingController();
+
+  final lastNameController = TextEditingController();
 
   final emailController = TextEditingController();
 
@@ -29,7 +30,7 @@ class _SignUpPagePageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      //backgroundColor: Colors.grey[300],
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthenticatedState) {
@@ -50,17 +51,18 @@ class _SignUpPagePageState extends State<SignUpPage> {
                     const SizedBox(
                       height: 50,
                     ),
-                    const Icon(
-                      Icons.lock,
-                      size: 100,
+                    const Image(
+                      image: AssetImage('images/photocraft.png'),
+                      height: 100,
+                      width: 100,
                     ),
                     const SizedBox(
                       height: 50,
                     ),
                     Text(
-                      "Welcome Back!",
+                      "Register",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(
                       height: 25,
@@ -74,8 +76,16 @@ class _SignUpPagePageState extends State<SignUpPage> {
                       height: 10,
                     ),
                     MyTextField(
-                      controller: nameController,
-                      hintText: 'name',
+                      controller: firstNameController,
+                      hintText: 'First Name',
+                      obscureText: false,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    MyTextField(
+                      controller: lastNameController,
+                      hintText: 'Last Name',
                       obscureText: false,
                     ),
                     const SizedBox(
@@ -124,9 +134,10 @@ class _SignUpPagePageState extends State<SignUpPage> {
                           context.read<AuthCubit>().signUp(
                               emailController.text,
                               passwordController.text,
-                              usernameController.text,
-                              nameController.text);
-                          AppRouter().router.go('/');
+                              firstNameController.text,
+                              lastNameController.text,
+                              usernameController.text);
+                          //context.go('/');
                         },
                         text: "Sign Up",
                       );
@@ -158,28 +169,21 @@ class _SignUpPagePageState extends State<SignUpPage> {
                     const SizedBox(
                       height: 50,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Builder(builder: (context) {
-                          return SquareTile(
-                            imagePath: 'google.png',
-                            onTap: () {
-                              context.read<AuthCubit>().signInWithGoogle();
-                            },
-                          );
+                    LoginButton(
+                        imagePath: "google.png",
+                        providerName: "Google",
+                        onTap: () {
+                          context.read<AuthCubit>().signInWithGoogle();
                         }),
-                        const SizedBox(
-                          width: 25,
-                        ),
-                        SquareTile(
-                          imagePath: 'facebook.png',
-                          onTap: () {
-                            context.read<AuthCubit>().signInWithFacebook();
-                          },
-                        )
-                      ],
+                    const SizedBox(
+                      height: 10,
                     ),
+                    LoginButton(
+                        imagePath: "facebook.png",
+                        providerName: "Facebook",
+                        onTap: () {
+                          context.read<AuthCubit>().signInWithFacebook();
+                        }),
                     const SizedBox(
                       height: 50,
                     ),

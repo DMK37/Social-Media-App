@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
+import 'package:social_media/components/login_button.dart';
 import 'package:social_media/components/my_button.dart';
 import 'package:social_media/components/my_text_field.dart';
-import 'package:social_media/components/square_tile.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthenticatedState) {
@@ -43,9 +42,10 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(
                       height: 50,
                     ),
-                    const Icon(
-                      Icons.lock,
-                      size: 100,
+                    const Image(
+                      image: AssetImage('images/photocraft.png'),
+                      height: 100,
+                      width: 100,
                     ),
                     const SizedBox(
                       height: 50,
@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
                     Text(
                       "Welcome Back!",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(
                       height: 25,
@@ -123,26 +123,21 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(
                       height: 50,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Builder(builder: (context) {
-                          return SquareTile(
-                              imagePath: 'google.png',
-                              onTap: () {
-                                context.read<AuthCubit>().signInWithGoogle();
-                              });
+                    LoginButton(
+                        imagePath: "google.png",
+                        providerName: "Google",
+                        onTap: () {
+                          context.read<AuthCubit>().signInWithGoogle();
                         }),
-                        const SizedBox(
-                          width: 25,
-                        ),
-                        SquareTile(
-                            imagePath: 'facebook.png',
-                            onTap: () {
-                              context.read<AuthCubit>().signInWithFacebook();
-                            })
-                      ],
+                    const SizedBox(
+                      height: 10,
                     ),
+                    LoginButton(
+                        imagePath: "facebook.png",
+                        providerName: "Facebook",
+                        onTap: () {
+                          context.read<AuthCubit>().signInWithFacebook();
+                        }),
                     const SizedBox(
                       height: 50,
                     ),

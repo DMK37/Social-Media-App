@@ -8,11 +8,15 @@ class AuthLoadingState extends AuthState {}
 
 class AuthenticatedState extends AuthState {
   final UserModel user;
+
+  getFullName() {
+    return '${user.firstName} ${user.lastName}';
+  }
+
   AuthenticatedState({required this.user});
 }
 
-class UnauthenticatedState extends AuthState {
-}
+class UnauthenticatedState extends AuthState {}
 
 class AuthFailureState extends AuthState {
   final String errorMessage;
