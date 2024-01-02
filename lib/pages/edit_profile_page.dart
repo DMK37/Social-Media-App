@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
 import 'package:social_media/components/edit_profile_text.dart';
@@ -22,7 +24,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => EditProfileCubit(authCubit: context.read<AuthCubit>()),
+      create: (_) => EditProfileCubit(
+          authCubit: context.read<AuthCubit>(),
+          prevUrl: (context.read<AuthCubit>().state as AuthenticatedState)
+              .user
+              .profileImageUrl),
       child: BlocListener<EditProfileCubit, EditProfileState>(
         listener: (context, state) {
           if (state is EditProfileSuccessState) {
@@ -49,71 +55,146 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   }),
                 ]),
             body: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-              if (state is AuthLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+              switch (state) {
+                case AuthLoadingState():
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                case UnauthenticatedState():
+                  return const Center(
+                    child: Text('Unauthenticated'),
+                  );
+                case AuthFailureState(errorMessage: final errorMessage):
+                  return Center(
+                    child: Text(errorMessage),
+                  );
+                case AuthenticatedState(user: final user):
+                  return BlocBuilder<EditProfileCubit, EditProfileState>(
+                      builder: (context, state) {
+                    switch (state) {
+                      case EditProfileLoadingState():
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      case EditProfileSuccessState():
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      case EditProfileErrorState(
+                          errorMessage: final errorMessage
+                        ):
+                        return Center(
+                          child: Text(errorMessage),
+                        );
+                      case EditProfileInitialState():
+                        return ListView(children: [
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              context.read<EditProfileCubit>().imageFile != null
+                                  ? CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: FileImage(context
+                                          .read<EditProfileCubit>()
+                                          .imageFile!))
+                                  : CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage:
+                                          NetworkImage(user.profileImageUrl)),
+                              Positioned(
+                                  bottom: -10,
+                                  left: 205,
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (BuildContext innerContext) =>
+                                            CupertinoActionSheet(
+                                          title: const Text('Choose options'),
+                                          actions: <CupertinoActionSheetAction>[
+                                            CupertinoActionSheetAction(
+                                              child: const Text(
+                                                  'Pick from Gallery'),
+                                              onPressed: () {
+                                                innerContext.pop();
+                                                context
+                                                    .read<EditProfileCubit>()
+                                                    .pickProfileImage(
+                                                        ImageSource.gallery);
+                                              },
+                                            ),
+                                            CupertinoActionSheetAction(
+                                              child: const Text('Take a Photo'),
+                                              onPressed: () {
+                                                innerContext.pop();
+                                                context
+                                                    .read<EditProfileCubit>()
+                                                    .pickProfileImage(
+                                                        ImageSource.camera);
+                                              },
+                                            ),
+                                          ],
+                                          cancelButton:
+                                              CupertinoActionSheetAction(
+                                            child: const Text('Cancel'),
+                                            onPressed: () {
+                                              innerContext.pop();
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add_circle_outline),
+                                  ))
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          Row(
+                            children: [
+                              Flexible(
+                                  child: EditProfileText(
+                                title: "First Name",
+                                controller: firstNameController
+                                  ..text = user.firstName,
+                              )),
+                              Flexible(
+                                child: EditProfileText(
+                                  controller: lastNameController
+                                    ..text = user.lastName,
+                                  title: "Last Name",
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 30),
+                          EditProfileText(
+                            title: "Username",
+                            controller: usernameController
+                              ..text = user.username,
+                          ),
+                          const SizedBox(height: 30),
+                          EditProfileText(
+                            title: "About",
+                            controller: aboutController..text = user.about,
+                          ),
+                          const SizedBox(height: 50)
+                        ]);
+                    }
+
+                    if (state is EditProfileInitialState) {}
+                    return const Center(
+                      child: Text("Error"),
+                    );
+                  });
               }
-              if (state is AuthenticatedState) {
-                return ListView(children: [
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  const Icon(
-                    Icons.person,
-                    size: 50,
-                  ),
-                  const SizedBox(
-                    height: 50,
-                  ),
-                  Row(
-                    children: [
-                      Flexible(
-                          child: EditProfileText(
-                        title: "First Name",
-                        controller: firstNameController
-                          ..text = (context.read<AuthCubit>().state
-                                  as AuthenticatedState)
-                              .user
-                              .firstName,
-                      )),
-                      Flexible(
-                        child: EditProfileText(
-                          controller: lastNameController
-                            ..text = (context.read<AuthCubit>().state
-                                    as AuthenticatedState)
-                                .user
-                                .lastName,
-                          title: "Last Name",
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  EditProfileText(
-                    title: "Username",
-                    controller: usernameController
-                      ..text = (context.read<AuthCubit>().state
-                              as AuthenticatedState)
-                          .user
-                          .username,
-                  ),
-                  const SizedBox(height: 30),
-                  EditProfileText(
-                    title: "About",
-                    controller: aboutController
-                      ..text = (context.read<AuthCubit>().state
-                              as AuthenticatedState)
-                          .user
-                          .about,
-                  ),
-                  const SizedBox(height: 50)
-                ]);
-              } else {
-                return const Center(
-                  child: Text("Error"),
-                );
-              }
+              return const Center(
+                child: Text("Error"),
+              );
             })),
       ),
     );

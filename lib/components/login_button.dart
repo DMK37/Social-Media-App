@@ -27,6 +27,7 @@ class LoginButton extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Image(image: AssetImage("images/$imagePath"), height: 30.0),
                 Padding(

@@ -5,7 +5,7 @@ import 'package:social_media/auth/cubit/auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
-  AuthCubit(this._authRepository) : super(AuthInitialState());
+  AuthCubit(this._authRepository) : super(AuthLoadingState());
 
   Future<void> isAuthenticated() async {
     emit(AuthLoadingState());
@@ -63,12 +63,16 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signInWithGoogle() async {
     try {
       emit(AuthLoadingState());
-      await _authRepository.signInWithGoogle();
-      UserModel? currentUser = await _authRepository.currentUser();
-      if (currentUser != null) {
-        emit(AuthenticatedState(user: currentUser));
+      final userCredentials = await _authRepository.signInWithGoogle();
+      if (userCredentials == null) {
+        //emit(AuthProviderSignUpState);
       } else {
-        emit(AuthFailureState(errorMessage: 'login user failed'));
+        UserModel? currentUser = await _authRepository.currentUser();
+        if (currentUser != null) {
+          emit(AuthenticatedState(user: currentUser));
+        } else {
+          emit(AuthFailureState(errorMessage: 'login user failed'));
+        }
       }
     } catch (e) {
       emit(AuthFailureState(errorMessage: e.toString()));

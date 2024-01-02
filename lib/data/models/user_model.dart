@@ -7,6 +7,7 @@ class UserModel {
   final String lastName;
   final String username;
   final String about;
+  final String profileImageUrl;
 
   const UserModel({
     this.userId,
@@ -15,6 +16,7 @@ class UserModel {
     required this.firstName,
     required this.lastName,
     required this.about,
+    required this.profileImageUrl,
   });
 
   toJson() => {
@@ -23,7 +25,12 @@ class UserModel {
         'firstName': firstName,
         'lastName': lastName,
         'about': about,
+        'profileImageUrl': profileImageUrl,
       };
+
+  getFullName() {
+    return '$firstName $lastName';
+  }
 
   factory UserModel.fromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> document) {
@@ -35,6 +42,7 @@ class UserModel {
       firstName: data['firstName'],
       lastName: data['lastName'],
       about: data['about'],
+      profileImageUrl: data['profileImageUrl'],
     );
   }
 }

@@ -90,11 +90,16 @@ class AppRouter {
     ],
     redirect: (BuildContext context, GoRouterState state) {
       final authState = context.read<AuthCubit>().state;
-      if (authState is AuthenticatedState && (state.uri.toString() == '/login' || 
-      state.uri.toString() == '/signup')) {
+      if (authState is AuthenticatedState &&
+          (state.uri.toString() == '/login' ||
+              state.uri.toString() == '/signup')) {
         return '/';
-      } 
-      if(authState is UnauthenticatedState){
+      }
+      if (authState is UnauthenticatedState &&
+          state.uri.toString() == '/signup') {
+        return '/signup';
+      }
+      if (authState is UnauthenticatedState) {
         return '/login';
       }
       return null;

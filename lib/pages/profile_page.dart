@@ -58,96 +58,111 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         body: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
-          if (state is AuthLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (state is AuthenticatedState) {
-            return ListView(
-              children: [
-                const SizedBox(
-                  height: 70,
-                ),
-                const Icon(
-                  Icons.person,
-                  size: 100,
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  (context.read<AuthCubit>().state as AuthenticatedState)
-                      .getFullName(),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "@${(context.read<AuthCubit>().state as AuthenticatedState).user.username}",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  (context.read<AuthCubit>().state as AuthenticatedState)
-                      .user
-                      .about,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text(
-                    '0 followers',
-                    style: Theme.of(context).textTheme.displayMedium,
+          switch (state) {
+            case AuthLoadingState():
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            case UnauthenticatedState():
+              return const Center(
+                child: Text('Unauthenticated'),
+              );
+            case AuthFailureState(errorMessage: final errorMessage):
+              return Center(
+                child: Text(errorMessage),
+              );
+            case AuthenticatedState(user: final user):
+              return ListView(
+                children: [
+                  const SizedBox(
+                    height: 70,
+                  ),
+                  Center(
+                    child: ClipOval(
+                      child: Image.network(
+                        
+                            user
+                            .profileImageUrl,
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                   const SizedBox(
-                    width: 4.0,
+                    height: 20,
                   ),
                   Text(
-                    " • ",
-                    style: Theme.of(context).textTheme.displayMedium,
+                    user
+                        .getFullName(),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "@${user.username}",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(
-                    width: 4.0,
+                    height: 10,
                   ),
                   Text(
-                    '0 following',
-                    style: Theme.of(context).textTheme.displayMedium,
+                    user
+                        .about,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                ]),
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(
-                      width: 150,
-                      child: TextButton(
-                        onPressed: () {
-                          context.go('/profile/edit');
-                          //StatefulNavigationShell.of(context).goBranch();;
-                        },
-                        style: Theme.of(context).textButtonTheme.style,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Text(
-                            'Edit Profile',
-                            style: Theme.of(context).textTheme.titleMedium,
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Text(
+                      '0 followers',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                    const SizedBox(
+                      width: 4.0,
+                    ),
+                    Text(
+                      " • ",
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                    const SizedBox(
+                      width: 4.0,
+                    ),
+                    Text(
+                      '0 following',
+                      style: Theme.of(context).textTheme.displayMedium,
+                    ),
+                  ]),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: 150,
+                        child: TextButton(
+                          onPressed: () {
+                            context.go('/profile/edit');
+                            //StatefulNavigationShell.of(context).goBranch();;
+                          },
+                          style: Theme.of(context).textButtonTheme.style,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10.0),
+                            child: Text(
+                              'Edit Profile',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                )
-              ],
-            );
+                  )
+                ],
+              );
           }
           return const Center(
             child: Text('Something went wrong'),

@@ -8,7 +8,7 @@ class MyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return 
       Container(
-        margin: const EdgeInsets.symmetric(horizontal: 50),
+        margin: const EdgeInsets.symmetric(horizontal: 25),
         child: TextButton(
           onPressed: onTap,
           style: ButtonStyle(

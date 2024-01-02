@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:social_media/data/models/user_model.dart';
@@ -8,6 +10,7 @@ import 'package:social_media/data/repository/user_repository.dart';
 class FirebaseAuthRepository extends AuthRepository {
   final _auth = FirebaseAuth.instance;
   final _user = UserRepository();
+  final _storage = FirebaseStorage.instance;
 
   @override
   Future<UserModel?> currentUser() async {
@@ -46,6 +49,8 @@ class FirebaseAuthRepository extends AuthRepository {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       final User? firebaseUser = userCredential.user;
+      final ref = _storage.ref().child('avatars/defaultAvatar.jpg');
+      String url = await ref.getDownloadURL();
       if (firebaseUser != null) {
         UserModel user = UserModel(
             userId: firebaseUser.uid,
@@ -53,7 +58,8 @@ class FirebaseAuthRepository extends AuthRepository {
             username: username,
             firstName: firstName,
             lastName: lastName,
-            about: '');
+            about: '',
+            profileImageUrl: url);
         _user.createUser(user);
         return user;
       }
@@ -64,7 +70,7 @@ class FirebaseAuthRepository extends AuthRepository {
   }
 
   @override
-  Future<void> signInWithGoogle() async {
+  Future<UserCredential?> signInWithGoogle() async {
     try {
       // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -78,11 +84,17 @@ class FirebaseAuthRepository extends AuthRepository {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-      await _auth.signInWithCredential(credential);
+      final doc =
+          await FirebaseFirestore.instance.collection("users").doc().get();
+      if (doc.exists) {
+        return await _auth.signInWithCredential(credential);
+      }
+      return null;
       // Once signed in, return the UserCredential
       //return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      print(e.toString());
+      rethrow;
+      //print(e.toString());
       //return null;
     }
   }
