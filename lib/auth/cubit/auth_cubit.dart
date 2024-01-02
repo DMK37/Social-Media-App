@@ -60,12 +60,31 @@ class AuthCubit extends Cubit<AuthState> {
     emit(UnauthenticatedState());
   }
 
+  Future<void> continueProviderSignUp(
+      String firstName, String lastName, String username) async {
+    if (state is ProviderSignUpState) {
+      UserModel? user = await _authRepository.continueProviderSignUp(
+          (state as ProviderSignUpState).credential,
+          firstName,
+          lastName,
+          username);
+      if (user != null) {
+        emit(AuthenticatedState(user: user));
+      } else {
+        emit(
+            AuthFailureState(errorMessage: "continue provider sign up failed"));
+      }
+    } else {
+      emit(AuthFailureState(errorMessage: "continue provider sign up failed"));
+    }
+  }
+
   Future<void> signInWithGoogle() async {
     try {
       emit(AuthLoadingState());
-      final userCredentials = await _authRepository.signInWithGoogle();
-      if (userCredentials == null) {
-        //emit(AuthProviderSignUpState);
+      final credentials = await _authRepository.signInWithGoogle();
+      if (credentials.$2 == null) {
+        emit(ProviderSignUpState(credential: credentials.$1));
       } else {
         UserModel? currentUser = await _authRepository.currentUser();
         if (currentUser != null) {
@@ -79,15 +98,21 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  //Future<void> continueProviderSignUp(String firstName, String secondName)
+
   Future<void> signInWithFacebook() async {
     try {
       emit(AuthLoadingState());
-      await _authRepository.signInWithFacebook();
-      UserModel? currentUser = await _authRepository.currentUser();
-      if (currentUser != null) {
-        emit(AuthenticatedState(user: currentUser));
+      final credentials = await _authRepository.signInWithFacebook();
+      if (credentials.$2 == null) {
+        emit(ProviderSignUpState(credential: credentials.$1));
       } else {
-        emit(AuthFailureState(errorMessage: 'login user failed'));
+        UserModel? currentUser = await _authRepository.currentUser();
+        if (currentUser != null) {
+          emit(AuthenticatedState(user: currentUser));
+        } else {
+          emit(AuthFailureState(errorMessage: 'login user failed'));
+        }
       }
     } catch (e) {
       emit(AuthFailureState(errorMessage: e.toString()));

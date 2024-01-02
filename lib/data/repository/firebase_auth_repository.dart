@@ -70,7 +70,7 @@ class FirebaseAuthRepository extends AuthRepository {
   }
 
   @override
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<(UserCredential, UserModel?)> signInWithGoogle() async {
     try {
       // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -84,12 +84,17 @@ class FirebaseAuthRepository extends AuthRepository {
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-      final doc =
-          await FirebaseFirestore.instance.collection("users").doc().get();
+
+      UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userCredential.user?.uid)
+          .get();
       if (doc.exists) {
-        return await _auth.signInWithCredential(credential);
+        return (userCredential, UserModel.fromSnapshot(doc));
       }
-      return null;
+      return (userCredential, null);
       // Once signed in, return the UserCredential
       //return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
@@ -100,7 +105,7 @@ class FirebaseAuthRepository extends AuthRepository {
   }
 
   @override
-  Future<void> signInWithFacebook() async {
+  Future<(UserCredential, UserModel?)> signInWithFacebook() async {
     //await FacebookAuth.instance.logOut();
     final LoginResult loginResult = await FacebookAuth.instance.login();
 
@@ -109,7 +114,41 @@ class FirebaseAuthRepository extends AuthRepository {
         FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
     // Once signed in, return the UserCredential
-    await _auth.signInWithCredential(facebookAuthCredential);
+    UserCredential userCredential =
+        await _auth.signInWithCredential(facebookAuthCredential);
+    final doc = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userCredential.user?.uid)
+        .get();
+    if (doc.exists) {
+      return (userCredential, UserModel.fromSnapshot(doc));
+    }
+    return (userCredential, null);
     //print(res);
+  }
+
+  @override
+  Future<UserModel?> continueProviderSignUp(UserCredential credential,
+      String firstName, String lastName, String username) async {
+    try {
+      final User? firebaseUser = credential.user;
+      final ref = _storage.ref().child('avatars/defaultAvatar.jpg');
+      String url = await ref.getDownloadURL();
+      if (firebaseUser != null) {
+        UserModel user = UserModel(
+            userId: firebaseUser.uid,
+            email: firebaseUser.email!,
+            username: username,
+            firstName: firstName,
+            lastName: lastName,
+            about: '',
+            profileImageUrl: url);
+        _user.createUser(user);
+        return user;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
   }
 }
