@@ -64,14 +64,6 @@ class AppRouter {
                     pageBuilder: (context, state) {
                       return const MaterialPage(child: ProfilePage());
                     },
-                    routes: [
-                      GoRoute(
-                        path: 'edit',
-                        pageBuilder: (context, state) {
-                          return const MaterialPage(child: EditProfilePage());
-                        },
-                      ),
-                    ],
                   ),
                 ])
           ]),
@@ -85,6 +77,12 @@ class AppRouter {
         path: '/signup',
         pageBuilder: (context, state) {
           return const MaterialPage(child: SignUpPage());
+        },
+      ),
+      GoRoute(
+        path: '/edit-profile',
+        pageBuilder: (context, state) {
+          return const MaterialPage(child: EditProfilePage());
         },
       ),
     ],

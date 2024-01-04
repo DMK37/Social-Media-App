@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
@@ -17,18 +19,35 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   String prevUrl;
   File? imageFile;
   EditProfileCubit({required this.authCubit, required this.prevUrl})
-      : super(EditProfileInitialState()) ;
+      : super(EditProfileInitialState());
 
   Future<void> pickProfileImage(ImageSource source) async {
     emit(EditProfileLoadingState());
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
-      emit(EditProfileInitialState());
-    } else {
-      emit(EditProfileInitialState());
-      //emit(EditProfileErrorState(errorMessage: 'no image selected'));
+      CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: const Color.fromRGBO(0, 125, 66, 0.7),
+              //backgroundColor: Color.fromRGBO(0, 125, 66, 0.7),
+              activeControlsWidgetColor: const Color.fromRGBO(0, 125, 66, 0.7),
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: true),
+          IOSUiSettings(
+            title: 'Cropper',
+            aspectRatioLockEnabled: true,
+          ),
+        ],
+      );
+      if (croppedImage != null) {
+        imageFile = File(croppedImage.path);
+      }
     }
+    emit(EditProfileInitialState());
   }
 
   Future<void> updateProfile(

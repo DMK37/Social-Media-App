@@ -80,12 +80,22 @@ class _ProfilePageState extends State<ProfilePage> {
                   Center(
                     child: ClipOval(
                       child: Image.network(
-                        
-                            user
-                            .profileImageUrl,
+                        user.profileImageUrl,
                         height: 100,
                         width: 100,
                         fit: BoxFit.cover,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -93,8 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 20,
                   ),
                   Text(
-                    user
-                        .getFullName(),
+                    user.getFullName(),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
@@ -108,8 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 10,
                   ),
                   Text(
-                    user
-                        .about,
+                    user.about,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
@@ -146,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         width: 150,
                         child: TextButton(
                           onPressed: () {
-                            context.go('/profile/edit');
+                            context.go('/edit-profile');
                             //StatefulNavigationShell.of(context).goBranch();;
                           },
                           style: Theme.of(context).textButtonTheme.style,

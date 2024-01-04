@@ -32,13 +32,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: BlocListener<EditProfileCubit, EditProfileState>(
         listener: (context, state) {
           if (state is EditProfileSuccessState) {
-            context.pop();
+            context.go("/profile");
           }
         },
         child: Scaffold(
             appBar: AppBar(
+              leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios),
+                  onPressed: () => context.go('/profile')),
                 centerTitle: true,
-                title: const Text("Detail"),
+                title: const Text("Edit Profile"),
                 actions: [
                   Builder(builder: (context) {
                     return IconButton(
