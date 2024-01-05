@@ -26,7 +26,6 @@ class FirebaseAuthRepository extends AuthRepository {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException {
-      //print(e.toString());
       rethrow;
     }
   }
@@ -64,7 +63,7 @@ class FirebaseAuthRepository extends AuthRepository {
         return user;
       }
     } catch (e) {
-      print(e.toString());
+      rethrow;
     }
     return null;
   }
@@ -72,17 +71,17 @@ class FirebaseAuthRepository extends AuthRepository {
   @override
   Future<(UserCredential, UserModel?)> signInWithGoogle() async {
     try {
-      // Trigger the Google Sign-In flow
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        throw Exception("cancelled");
+      }
 
-      // Obtain the auth details from the request
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-      // Create a new credential
       final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
 
       UserCredential userCredential =
@@ -95,25 +94,22 @@ class FirebaseAuthRepository extends AuthRepository {
         return (userCredential, UserModel.fromSnapshot(doc));
       }
       return (userCredential, null);
-      // Once signed in, return the UserCredential
-      //return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
       rethrow;
-      //print(e.toString());
-      //return null;
     }
   }
 
   @override
   Future<(UserCredential, UserModel?)> signInWithFacebook() async {
-    //await FacebookAuth.instance.logOut();
+    await FacebookAuth.instance.logOut();
     final LoginResult loginResult = await FacebookAuth.instance.login();
+    if (loginResult.status == LoginStatus.cancelled) {
+      throw Exception("cancelled");
+    }
 
-    // Create a credential from the access token
     final OAuthCredential facebookAuthCredential =
         FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
-    // Once signed in, return the UserCredential
     UserCredential userCredential =
         await _auth.signInWithCredential(facebookAuthCredential);
     final doc = await FirebaseFirestore.instance
@@ -124,7 +120,6 @@ class FirebaseAuthRepository extends AuthRepository {
       return (userCredential, UserModel.fromSnapshot(doc));
     }
     return (userCredential, null);
-    //print(res);
   }
 
   @override
@@ -147,7 +142,7 @@ class FirebaseAuthRepository extends AuthRepository {
         return user;
       }
     } catch (e) {
-      print(e.toString());
+      rethrow;
     }
     return null;
   }

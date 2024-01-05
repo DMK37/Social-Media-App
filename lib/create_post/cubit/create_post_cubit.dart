@@ -24,6 +24,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
   Future<void> pickPostImage(ImageSource source) async {
     emit(CreatePostLoadingState());
+    
     final pickedFile = await picker.pickImage(source: source);
     originalImage = pickedFile;
     if (pickedFile != null) {

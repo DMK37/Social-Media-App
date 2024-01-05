@@ -7,8 +7,8 @@ import 'package:social_media/components/my_button.dart';
 import 'package:social_media/components/my_text_field.dart';
 
 class SignUpView extends StatefulWidget {
-  const SignUpView({super.key});
-
+  final String? errorMessage;
+  const SignUpView({super.key, this.errorMessage});
   @override
   State<SignUpView> createState() => _SignUpViewState();
 }
@@ -25,172 +25,170 @@ class _SignUpViewState extends State<SignUpView> {
   final passwordController = TextEditingController();
 
   final confirmPasswordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body: SafeArea(
-                child: ListView(
-                  children: [
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    const Image(
-                      image: AssetImage('images/photocraft.png'),
-                      height: 100,
-                      width: 100,
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Text(
-                      "Register",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    MyTextField(
-                      controller: usernameController,
-                      hintText: 'Username',
-                      obscureText: false,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    MyTextField(
-                      controller: firstNameController,
-                      hintText: 'First Name',
-                      obscureText: false,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    MyTextField(
-                      controller: lastNameController,
-                      hintText: 'Last Name',
-                      obscureText: false,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    MyTextField(
-                      controller: emailController,
-                      hintText: 'Email',
-                      obscureText: false,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    MyTextField(
-                      controller: passwordController,
-                      hintText: 'Password',
-                      obscureText: true,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    MyTextField(
-                      controller: confirmPasswordController,
-                      hintText: 'Confirm Password',
-                      obscureText: true,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text('Forgot Your Password?',
-                              style: TextStyle(color: Colors.grey[600]))
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 25,
-                    ),
-                    Builder(builder: (context) {
-                      return MyButton(
-                        onTap: () {
-                          context.read<AuthCubit>().signUp(
-                              emailController.text,
-                              passwordController.text,
-                              firstNameController.text,
-                              lastNameController.text,
-                              usernameController.text);
-                          //context.go('/');
-                        },
-                        text: "Sign Up",
-                      );
-                    }),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: Divider(
-                            color: Colors.grey[400],
-                            thickness: 0.5,
-                          )),
-                          Text(
-                            'Or Continue With',
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                          Expanded(
-                              child: Divider(
-                            color: Colors.grey[400],
-                            thickness: 0.5,
-                          ))
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    LoginButton(
-                        imagePath: "google.png",
-                        providerName: "Google",
-                        onTap: () {
-                          context.read<AuthCubit>().signInWithGoogle();
-                        }),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    LoginButton(
-                        imagePath: "facebook.png",
-                        providerName: "Facebook",
-                        onTap: () {
-                          context.read<AuthCubit>().signInWithFacebook();
-                        }),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Already have an account?'),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        GestureDetector(
-                            onTap: () => context.go('/login'),
-                            child: const Text(
-                              'Login Here',
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold),
-                            ))
-                      ],
-                    ),
-                    const SizedBox(height: 50)
-                  ],
-                ),
+    return SafeArea(
+        child: ListView(
+          children: [
+            const SizedBox(
+              height: 50,
+            ),
+            const Image(
+              image: AssetImage('images/photocraft.png'),
+              height: 100,
+              width: 100,
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            Text(
+              "Register",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            MyTextField(
+              controller: usernameController,
+              hintText: 'Username',
+              obscureText: false,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            MyTextField(
+              controller: firstNameController,
+              hintText: 'First Name',
+              obscureText: false,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            MyTextField(
+              controller: lastNameController,
+              hintText: 'Last Name',
+              obscureText: false,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            MyTextField(
+              controller: emailController,
+              hintText: 'Email',
+              obscureText: false,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            MyTextField(
+              controller: passwordController,
+              hintText: 'Password',
+              obscureText: true,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            MyTextField(
+              controller: confirmPasswordController,
+              hintText: 'Confirm Password',
+              obscureText: true,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('Forgot Your Password?',
+                      style: TextStyle(color: Colors.grey[600]))
+                ],
               ),
-    );
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            Builder(builder: (context) {
+              return MyButton(
+                onTap: () {
+                  context.read<AuthCubit>().signUp(
+                      emailController.text,
+                      passwordController.text,
+                      firstNameController.text,
+                      lastNameController.text,
+                      usernameController.text);
+                  //context.go('/');
+                },
+                text: "Sign Up",
+              );
+            }),
+            const SizedBox(
+              height: 50,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Divider(
+                    color: Colors.grey[400],
+                    thickness: 0.5,
+                  )),
+                  Text(
+                    'Or Continue With',
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                  Expanded(
+                      child: Divider(
+                    color: Colors.grey[400],
+                    thickness: 0.5,
+                  ))
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            LoginButton(
+                imagePath: "google.png",
+                providerName: "Google",
+                onTap: () {
+                  context.read<AuthCubit>().signInWithGoogle();
+                }),
+            const SizedBox(
+              height: 10,
+            ),
+            LoginButton(
+                imagePath: "facebook.png",
+                providerName: "Facebook",
+                onTap: () {
+                  context.read<AuthCubit>().signInWithFacebook();
+                }),
+            const SizedBox(
+              height: 50,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Already have an account?'),
+                const SizedBox(
+                  width: 4,
+                ),
+                GestureDetector(
+                    onTap: () => context.go('/login'),
+                    child: const Text(
+                      'Login Here',
+                      style: TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    ))
+              ],
+            ),
+            const SizedBox(height: 50)
+          ],
+        ),
+      );
   }
 }

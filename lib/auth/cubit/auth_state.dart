@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:social_media/data/models/user_model.dart';
 
 abstract class AuthState {}
@@ -7,8 +8,28 @@ class AuthLoadingState extends AuthState {}
 
 class AuthenticatedState extends AuthState {
   final UserModel user;
-
-  AuthenticatedState({required this.user});
+  ClipOval? image;
+  AuthenticatedState({required this.user}) {
+    image = ClipOval(
+        child: Image.network(
+      user.profileImageUrl,
+      height: 100,
+      width: 100,
+      fit: BoxFit.cover,
+      loadingBuilder: (BuildContext context, Widget child,
+          ImageChunkEvent? loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+                : null,
+          ),
+        );
+      },
+    ));
+  }
 }
 
 class UnauthenticatedState extends AuthState {}

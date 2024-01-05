@@ -7,7 +7,9 @@ import 'package:social_media/components/my_button.dart';
 import 'package:social_media/components/my_text_field.dart';
 
 class LoginView extends StatefulWidget {
-  const LoginView({super.key});
+  final String? errorMessage;
+
+  const LoginView({super.key, this.errorMessage});
 
   @override
   State<LoginView> createState() => _LoginViewState();
@@ -17,10 +19,10 @@ class _LoginViewState extends State<LoginView> {
   final emailController = TextEditingController();
 
   final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+    return SafeArea(
         child: ListView(
           children: [
             const SizedBox(
@@ -147,7 +149,6 @@ class _LoginViewState extends State<LoginView> {
             const SizedBox(height: 50)
           ],
         ),
-      ),
-    );
+      );
   }
 }
