@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
@@ -34,12 +35,25 @@ class _ProfilePageState extends State<ProfilePage> {
                       builder: (context) {
                         return Wrap(
                           children: [
-                            ListTile(
-                              leading: Icon(Icons.light_mode),
-                              title: const Text('Change theme'),
-                              onTap: () {
-                                context.read<ThemeCubit>().changeTheme();
-                              },
+                            BlocBuilder<ThemeCubit,ThemeData>(
+                              builder: (context, state) {
+                                if(state.brightness == Brightness.light){
+                                  return ListTile(
+                                    leading: const Icon(Icons.dark_mode),
+                                    title: const Text('Change theme'),
+                                    onTap: () {
+                                      context.read<ThemeCubit>().changeTheme();
+                                    },
+                                  );
+                                }
+                                return ListTile(
+                                  leading: const Icon(Icons.light_mode),
+                                  title: const Text('Change theme'),
+                                  onTap: () {
+                                    context.read<ThemeCubit>().changeTheme();
+                                  },
+                                );
+                              }
                             ),
                             ListTile(
                               leading: const Icon(Icons.logout),
@@ -53,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     );
                   },
-                  icon: const Icon(Icons.settings));
+                  icon: const Icon(FontAwesomeIcons.bars));
             }),
           ],
         ),

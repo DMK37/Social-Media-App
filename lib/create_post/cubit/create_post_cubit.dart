@@ -24,7 +24,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
 
   Future<void> pickPostImage(ImageSource source) async {
     emit(CreatePostLoadingState());
-    
+
     final pickedFile = await picker.pickImage(source: source);
     originalImage = pickedFile;
     if (pickedFile != null) {
@@ -46,16 +46,16 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         ],
         uiSettings: [
           AndroidUiSettings(
-              toolbarTitle: 'Cropper',
-              toolbarColor: const Color.fromRGBO(0, 125, 66, 0.7),
-              //backgroundColor: Color.fromRGBO(0, 125, 66, 0.7),
-              activeControlsWidgetColor: const Color.fromRGBO(0, 125, 66, 0.7),
-              toolbarWidgetColor: Colors.white,
-              initAspectRatio: CropAspectRatioPreset.original,
-              lockAspectRatio: true),
+            toolbarTitle: 'Cropper',
+            toolbarColor: const Color.fromRGBO(0, 125, 66, 0.7),
+            //backgroundColor: Color.fromRGBO(0, 125, 66, 0.7),
+            activeControlsWidgetColor: const Color.fromRGBO(0, 125, 66, 0.7),
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+          ),
           IOSUiSettings(
             title: 'Cropper',
-            aspectRatioLockEnabled: true,
+            //aspectRatioLockEnabled: true,
           ),
         ],
       );
@@ -63,7 +63,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         imageFile = File(croppedImage.path);
       }
     }
-    emit(CreatePostSuccessState());
+    emit(CreatePostInitiaState());
   }
 
   createPost(String description, List<String> tags) async {
@@ -78,7 +78,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       timestamp: DateTime.now(),
     );
     postModel = await postRepository.createPost(postModel);
-    final ref = _storage.ref().child('posts/${postModel.postId}.jpg');
+    final ref = _storage.ref().child('post_images/${postModel.postId}.jpg');
     await ref.putFile(imageFile!);
     final url = await ref.getDownloadURL();
     String id = postModel.postId!;
@@ -89,7 +89,12 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       tags: postModel.tags,
       timestamp: postModel.timestamp,
     );
-    await FirebaseFirestore.instance.collection('your_collection').doc(id).update(postModel.toJson());
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(id)
+        .update(postModel.toJson());
+    imageFile = null;
+    originalImage = null;
     emit(CreatePostSuccessState());
   }
 }

@@ -8,6 +8,7 @@ import 'package:social_media/pages/create_page.dart';
 import 'package:social_media/pages/edit_profile_page.dart';
 import 'package:social_media/pages/home_page.dart';
 import 'package:social_media/pages/login_page.dart';
+import 'package:social_media/pages/post_page.dart';
 import 'package:social_media/pages/profile_page.dart';
 import 'package:social_media/pages/search_page.dart';
 import 'package:social_media/pages/signup_page.dart';
@@ -77,6 +78,12 @@ class AppRouter {
         path: '/signup',
         pageBuilder: (context, state) {
           return const MaterialPage(child: SignUpPage());
+        },
+      ),
+      GoRoute(
+        path: '/post',
+        pageBuilder: (context, state) {
+          return const MaterialPage(child: PostPage());
         },
       ),
       GoRoute(

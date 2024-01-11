@@ -36,7 +36,7 @@ class PostModel {
       imageUrl: data['imageUrl'],
       description: data['description'],
       //likedBy: data['likedBy'],
-      tags: data['tags'],
+      tags: List<String>.from(data['tags']),
       timestamp: data['timestamp'].toDate(),
     );
   }

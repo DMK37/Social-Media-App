@@ -35,6 +35,7 @@ final ThemeData darkTheme = ThemeData(
     headlineMedium: TextStyle(
       fontSize: 17.0,
       color: Color.fromRGBO(255, 255, 255, 0.87),
+      fontWeight: FontWeight.bold,
     ),
     titleLarge: TextStyle(
       fontSize: 27.0,

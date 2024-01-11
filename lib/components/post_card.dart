@@ -26,7 +26,12 @@ class PostCard extends StatelessWidget {
                     )))
           ],
         ),
-        ClipRRect(child: Image(image: AssetImage("images/google.png"))),
+        ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(
+          'https://www.dpreview.com/files/p/articles/7961724650/Lesson-4-Yarra-Ranges-Road-Black-Spur-Mountain-Ash.jpeg',
+          fit: BoxFit.cover,
+        )),
       ]),
     );
   }
