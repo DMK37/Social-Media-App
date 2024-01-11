@@ -81,9 +81,9 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/post',
+        path: '/post/:postId',
         pageBuilder: (context, state) {
-          return const MaterialPage(child: PostPage());
+          return  MaterialPage(child: PostPage(postId: state.pathParameters['postId']!));
         },
       ),
       GoRoute(

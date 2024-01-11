@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
-import 'package:social_media/create_post/cubit/create_post_cubit.dart';
+import 'package:social_media/post/create_post/cubit/create_post_cubit.dart';
 import 'package:social_media/data/repository/firebase_auth_repository.dart';
 import 'package:social_media/firebase_options.dart';
 import 'package:social_media/router_config.dart';

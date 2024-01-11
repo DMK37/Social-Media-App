@@ -21,8 +21,7 @@ class PostRepository {
     final posts = await _db
         .collection('posts')
         .where('userId', isEqualTo: userId)
-        .orderBy('timestamp', descending: true)
         .get();
-    return posts.docs.map((e) => PostModel.fromSnapshot(e)).toList();
+    return posts.docs.map((e) => PostModel.fromSnapshot(e)).toList()..sort((a,b) => b.timestamp.compareTo(a.timestamp));
   }
 }

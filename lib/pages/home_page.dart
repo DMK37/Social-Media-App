@@ -4,7 +4,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
-import 'package:social_media/components/post_card.dart';
+import 'package:social_media/components/profile_post_card.dart';
+import 'package:social_media/data/models/post_model.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -38,7 +39,8 @@ class HomePage extends StatelessWidget {
                 mainAxisSpacing: 8,
                 crossAxisSpacing: 20,
                 itemBuilder: (context, index) {
-                  return const PostCard();
+                  //return const PostCard(post: PostModel(),);
+                  return Text("qq");
                 },
               ),
             );

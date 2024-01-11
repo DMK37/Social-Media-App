@@ -40,4 +40,15 @@ class PostModel {
       timestamp: data['timestamp'].toDate(),
     );
   }
+
+  factory PostModel.fromMap(Map<String, dynamic> data) {
+    return PostModel(
+      userId: data['userId'],
+      imageUrl: data['imageUrl'],
+      description: data['description'],
+      //likedBy: data['likedBy'],
+      tags: List<String>.from(data['tags']),
+      timestamp: data['timestamp'].toDate(),
+    );
+  }
 }

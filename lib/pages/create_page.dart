@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_media/components/success_snack_bar.dart';
-import 'package:social_media/create_post/cubit/create_post_cubit.dart';
-import 'package:social_media/create_post/cubit/create_post_state.dart';
+import 'package:social_media/post/create_post/cubit/create_post_cubit.dart';
+import 'package:social_media/post/create_post/cubit/create_post_state.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({super.key});
@@ -45,6 +45,7 @@ class _CreatePageState extends State<CreatePage> {
 
   final descriptionController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +86,8 @@ class _CreatePageState extends State<CreatePage> {
                               //color: Colors.grey[200],
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: Theme.of(context).colorScheme.secondary),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
                             ),
                             child: Center(
                                 child: Column(
@@ -94,7 +96,8 @@ class _CreatePageState extends State<CreatePage> {
                                 Icon(
                                   Icons.add_a_photo_outlined,
                                   size: 70,
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                                 const SizedBox(
                                   height: 20,
@@ -113,7 +116,8 @@ class _CreatePageState extends State<CreatePage> {
                           child: Column(
                             children: [
                               SizedBox(
-                                height: MediaQuery.of(context).size.height * 0.35,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.35,
                                 width: double.infinity,
                                 child: Image.file(
                                   context.read<CreatePostCubit>().imageFile!,
@@ -167,19 +171,80 @@ class _CreatePageState extends State<CreatePage> {
                           _focusNode.unfocus();
                         }),
                   ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Wrap(
+                    children: context.read<CreatePostCubit>().tags.map(
+                      (tag) {
+                        bool isSelected = false;
+                        if (context
+                            .read<CreatePostCubit>()
+                            .selectedTags!
+                            .contains(tag)) {
+                          isSelected = true;
+                        }
+                        return GestureDetector(
+                          onTap: () {
+                            if (!context
+                                .read<CreatePostCubit>()
+                                .selectedTags!
+                                .contains(tag)) {
+                              context
+                                  .read<CreatePostCubit>()
+                                  .selectedTags!
+                                  .add(tag);
+                              setState(() {});
+                            } else {
+                              context
+                                  .read<CreatePostCubit>()
+                                  .selectedTags!
+                                  .removeWhere((element) => element == tag);
+                              setState(() {});
+                            }
+                          },
+                          child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 4),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 12),
+                                decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(18),
+                                    border: Border.all(
+                                        color: isSelected
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .tertiary
+                                            : Colors.grey,
+                                        width: 2)),
+                                child: Text(
+                                  tag,
+                                  style: TextStyle(
+                                      color: isSelected
+                                          ? Theme.of(context)
+                                              .colorScheme
+                                              .tertiary
+                                          : Colors.grey,
+                                      fontSize: 14),
+                                ),
+                              )),
+                        );
+                      },
+                    ).toList(),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   TextButton(
                       onPressed: () {
-                        List<String> tags = [""];
                         context
                             .read<CreatePostCubit>()
-                            .createPost(descriptionController.text, tags);
+                            .createPost(descriptionController.text);
                       },
                       child: const Text('Create Post')),
-                  TextButton(
-                      onPressed: () {
-                        context.push('/post');
-                      },
-                      child: const Text('Post'))
                 ],
               );
             default:

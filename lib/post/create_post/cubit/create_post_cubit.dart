@@ -8,7 +8,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
-import 'package:social_media/create_post/cubit/create_post_state.dart';
+import 'package:social_media/post/create_post/cubit/create_post_state.dart';
 import 'package:social_media/data/models/post_model.dart';
 import 'package:social_media/data/models/user_model.dart';
 import 'package:social_media/data/repository/post_repository.dart';
@@ -19,13 +19,42 @@ class CreatePostCubit extends Cubit<CreatePostState> {
   final AuthCubit authCubit;
   File? imageFile;
   XFile? originalImage;
+  List<String> tags = [
+    "Portraits",
+    "Landscapes",
+    "StreetStyle",
+    "Macro",
+    "Monochrome",
+    "Nature",
+    "Travel",
+    "Nighttime",
+    "Fashion",
+    "Abstract",
+    "Film",
+    "Wildlife",
+    "Urban",
+    "Events",
+    "Aerial",
+    "Underwater",
+    "Tips",
+    "Gear",
+    "Inspiration",
+    "Editing",
+  ];
+
+  List<String>? selectedTags = [];
   final picker = ImagePicker();
   CreatePostCubit({required this.authCubit}) : super(CreatePostInitiaState());
 
   Future<void> pickPostImage(ImageSource source) async {
     emit(CreatePostLoadingState());
 
-    final pickedFile = await picker.pickImage(source: source);
+    final pickedFile = await picker.pickImage(
+      source: source,
+      maxWidth: 1920,
+      maxHeight: 1920,
+      imageQuality: 80,
+    );
     originalImage = pickedFile;
     if (pickedFile != null) {
       imageFile = File(pickedFile.path);
@@ -66,7 +95,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
     emit(CreatePostInitiaState());
   }
 
-  createPost(String description, List<String> tags) async {
+  createPost(String description) async {
     emit(CreatePostLoadingState());
 
     UserModel? user = (authCubit.state as AuthenticatedState).user;
@@ -74,7 +103,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       userId: user.userId!,
       description: description,
       imageUrl: '',
-      tags: tags,
+      tags: selectedTags ?? [],
       timestamp: DateTime.now(),
     );
     postModel = await postRepository.createPost(postModel);
@@ -95,6 +124,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
         .update(postModel.toJson());
     imageFile = null;
     originalImage = null;
+    selectedTags = [];
     emit(CreatePostSuccessState());
   }
 }

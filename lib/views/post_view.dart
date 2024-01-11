@@ -1,30 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:social_media/data/models/post_model.dart';
+import 'package:social_media/data/models/user_model.dart';
 
 class PostView extends StatelessWidget {
-  const PostView({super.key});
+  final PostModel post;
+  final UserModel user;
+  const PostView({super.key, required this.post, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Column(
+        child: ListView(
           children: [
             Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 20,
                     backgroundImage: NetworkImage(
-                        'https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg'),
+                        user.profileImageUrl),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Text(
-                    "qwerty",
+                    user.username,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const Spacer(),
@@ -34,11 +38,11 @@ class PostView extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.35,
-              width: double.infinity,
+            ClipRRect(
+              //height: MediaQuery.of(context).size.height * 0.35,
+              borderRadius: BorderRadius.circular(20),
               child: Image.network(
-                  'https://www.dpreview.com/files/p/articles/7961724650/Lesson-4-Yarra-Ranges-Road-Black-Spur-Mountain-Ash.jpeg',
+                  post.imageUrl,
                   fit: BoxFit.cover),
             ),
             Padding(
@@ -56,9 +60,7 @@ class PostView extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                      onPressed: () {
-                        
-                      },
+                      onPressed: () {},
                       icon: const Icon(FontAwesomeIcons.comment)),
                   Text(
                     "7",
@@ -70,7 +72,9 @@ class PostView extends StatelessWidget {
                       icon: const Icon(Icons.bookmark_border_outlined)),
                 ],
               ),
-            )
+            ),
+            Center(
+              child: Text(post.description, style: Theme.of(context).textTheme.bodyMedium,))
           ],
         ));
   }
