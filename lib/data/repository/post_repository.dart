@@ -34,8 +34,7 @@ class PostRepository {
     }
     final newComment = CommentModel(
       comment: comment,
-      avatar: user.profileImageUrl,
-      username: user.username,
+      userId: user.userId!,
       timestamp: DateTime.now(),
     );
     post.comments.add(newComment);

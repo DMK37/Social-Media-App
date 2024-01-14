@@ -1,11 +1,11 @@
-import 'package:social_media/data/models/comment_model.dart';
+import 'package:social_media/data/models/display_comment_model.dart';
 
 abstract class CommentsState {}
 
 class CommentsLoadingState extends CommentsState {}
 
 class CommentsLoadedState extends CommentsState {
-  final List<CommentModel> comments;
+  final List<DisplayCommentModel> comments;
 
   CommentsLoadedState(this.comments);
 }

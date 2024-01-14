@@ -1,29 +1,24 @@
 class CommentModel {
-  final String avatar;
-  final String username;
+  final String userId;
   final String comment;
   final DateTime timestamp;
 
   CommentModel({
-    required this.avatar,
-    required this.username,
+    required this.userId,
     required this.comment,
     required this.timestamp,
   });
 
   toJson() => {
-        'avatar': avatar,
-        'username': username,
+        'userId': userId,
         'comment': comment,
         'timestamp': timestamp,
       };
 
-  factory CommentModel.fromSnapshot(
-      Map<String, dynamic> document) {
+  factory CommentModel.fromSnapshot(Map<String, dynamic> document) {
     final data = document;
     return CommentModel(
-      avatar: data['avatar'],
-      username: data['username'],
+      userId: data['userId'],
       comment: data['comment'],
       timestamp: data['timestamp'].toDate(),
     );
@@ -31,11 +26,9 @@ class CommentModel {
 
   factory CommentModel.fromMap(Map<String, dynamic> data) {
     return CommentModel(
-      avatar: data['avatar'],
-      username: data['username'],
+      userId: data['userId'],
       comment: data['comment'],
       timestamp: data['timestamp'].toDate(),
     );
   }
-
 }
