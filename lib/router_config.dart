@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
 import 'package:social_media/components/scaffold_with_bottom_bar.dart';
+import 'package:social_media/pages/comments_page.dart';
 import 'package:social_media/pages/create_page.dart';
 import 'package:social_media/pages/edit_profile_page.dart';
 import 'package:social_media/pages/home_page.dart';
@@ -85,7 +86,16 @@ class AppRouter {
         pageBuilder: (context, state) {
           return  MaterialPage(child: PostPage(postId: state.pathParameters['postId']!));
         },
+        routes: [
+          GoRoute(
+            path: 'comments',
+            pageBuilder: (context, state) {
+              return MaterialPage(child: CommentsPage(postId: state.pathParameters['postId']!));
+            },
+          ),
+        ]
       ),
+
       GoRoute(
         path: '/edit-profile',
         pageBuilder: (context, state) {

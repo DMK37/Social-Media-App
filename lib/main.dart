@@ -6,6 +6,7 @@ import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/post/create_post/cubit/create_post_cubit.dart';
 import 'package:social_media/data/repository/firebase_auth_repository.dart';
 import 'package:social_media/firebase_options.dart';
+import 'package:social_media/post/cubit/user_posts_cubit.dart';
 import 'package:social_media/router_config.dart';
 import 'package:social_media/theme/theme_cubit.dart';
 
@@ -32,7 +33,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ThemeCubit(),
         ),
-        BlocProvider(create: (context) => CreatePostCubit(authCubit: context.read<AuthCubit>()))
+        BlocProvider(create: (context) => CreatePostCubit(authCubit: context.read<AuthCubit>())),
+        BlocProvider(create: (context) => UserPostsCubit(authCubit: context.read<AuthCubit>()),)
       ],
       child: Builder(builder: (context) {
         return MaterialApp.router(

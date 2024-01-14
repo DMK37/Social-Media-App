@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:social_media/components/success_snack_bar.dart';
 import 'package:social_media/post/create_post/cubit/create_post_cubit.dart';
 import 'package:social_media/post/create_post/cubit/create_post_state.dart';
+import 'package:social_media/post/cubit/user_posts_cubit.dart';
 
 class CreatePage extends StatefulWidget {
   const CreatePage({super.key});
@@ -55,7 +56,7 @@ class _CreatePageState extends State<CreatePage> {
       body: BlocListener<CreatePostCubit, CreatePostState>(
         listener: (context, state) {
           if (state is CreatePostSuccessState) {
-            //context.go('/post');
+            context.read<UserPostsCubit>().fetchPosts();
             descriptionController.clear();
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               behavior: SnackBarBehavior.floating,

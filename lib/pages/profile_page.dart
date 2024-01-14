@@ -94,175 +94,182 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Text(errorMessage),
               );
             case AuthenticatedState(user: final user):
-              return CustomScrollView(
-                slivers: <Widget>[
-                  // Your widgets
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        Center(
-                          child: ClipOval(
-                            child: Image.network(
-                              user.profileImageUrl,
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return SizedBox(
-                                    width: 100,
-                                    height: 100,
-                                    child: Shimmer.fromColors(
-                                        baseColor: Colors.grey[800]!,
-                                        highlightColor: Colors.grey[700]!,
-                                        child: Container(
-                                          color: Colors.grey[800],
-                                        )));
-                              },
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<AuthCubit>().isAuthenticated();
+                  context.read<UserPostsCubit>().fetchPosts();
+                },
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    // Your widgets
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          const SizedBox(
+                            height: 40,
+                          ),
+                          Center(
+                            child: ClipOval(
+                              child: Image.network(
+                                user.profileImageUrl,
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (BuildContext context,
+                                    Widget child,
+                                    ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return SizedBox(
+                                      width: 100,
+                                      height: 100,
+                                      child: Shimmer.fromColors(
+                                          baseColor: Colors.grey[800]!,
+                                          highlightColor: Colors.grey[700]!,
+                                          child: Container(
+                                            color: Colors.grey[800],
+                                          )));
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          user.getFullName(),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          "@${user.username}",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          user.about,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '0 followers',
-                                style:
-                                    Theme.of(context).textTheme.displayMedium,
-                              ),
-                              const SizedBox(
-                                width: 4.0,
-                              ),
-                              Text(
-                                " • ",
-                                style:
-                                    Theme.of(context).textTheme.displayMedium,
-                              ),
-                              const SizedBox(
-                                width: 4.0,
-                              ),
-                              Text(
-                                '0 following',
-                                style:
-                                    Theme.of(context).textTheme.displayMedium,
-                              ),
-                            ]),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SizedBox(
-                              width: 150,
-                              child: TextButton(
-                                onPressed: () {
-                                  context.go('/edit-profile');
-                                  //StatefulNavigationShell.of(context).goBranch();;
-                                },
-                                style: Theme.of(context).textButtonTheme.style,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0),
-                                  child: Text(
-                                    'Edit Profile',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            user.getFullName(),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "@${user.username}",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.labelLarge,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            user.about,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '0 followers',
+                                  style:
+                                      Theme.of(context).textTheme.displayMedium,
+                                ),
+                                const SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text(
+                                  " • ",
+                                  style:
+                                      Theme.of(context).textTheme.displayMedium,
+                                ),
+                                const SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text(
+                                  '0 following',
+                                  style:
+                                      Theme.of(context).textTheme.displayMedium,
+                                ),
+                              ]),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 150,
+                                child: TextButton(
+                                  onPressed: () {
+                                    context.go('/edit-profile');
+                                    //StatefulNavigationShell.of(context).goBranch();;
+                                  },
+                                  style: Theme.of(context).textButtonTheme.style,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0),
+                                    child: Text(
+                                      'Edit Profile',
+                                      style:
+                                          Theme.of(context).textTheme.titleMedium,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                      ],
+                          const SizedBox(
+                            height: 15,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SliverAppBar(
-                    title: Text('Posts'),
-                    pinned: true,
-                  ),
-                  BlocProvider(
-                    create: (context) =>
-                        UserPostsCubit((context.read<AuthCubit>().state as AuthenticatedState).user.userId!)..fetchPosts(),
-                    child: BlocBuilder<UserPostsCubit, UserPostsState>(
-                      builder: (context, state) {
-                        switch (state) {
-                          case UserPostsLoadingState():
-                            return const SliverToBoxAdapter(
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-                          case UserPostsEmptyState():
-                            return const SliverToBoxAdapter(
-                              child: Center(
-                                child: Text('No posts'),
-                              ),
-                            );
-                          case UserPostsLoadedState(posts: final posts):
-                            return SliverPadding(
-                              padding: const EdgeInsets.all(8.0),
-                              sliver: SliverMasonryGrid.count(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 8,
-                                crossAxisSpacing: 15,
-                                childCount: posts.length,
-                                itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      context.push('/post/${posts[index].postId}');
-                                    },
-                                    child: ProfilePostCard(
-                                      post: posts[index],
+                    const SliverAppBar(
+                      title: Text('Posts'),
+                      pinned: true,
+                    ),
+                     Builder(
+                       builder: (context) {
+                        context.read<UserPostsCubit>().fetchPosts();
+                         return BlocBuilder<UserPostsCubit, UserPostsState>(
+                            builder: (context, state) {
+                              switch (state) {
+                                case UserPostsLoadingState():
+                                  return const SliverToBoxAdapter(
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
                                     ),
                                   );
-                                },
-                              ),
-                            );
-                          default:
-                            return const SliverToBoxAdapter(
-                              child: Center(
-                                child: Text('Something went wrong'),
-                              ),
-                            );
-                        }
-                      },
-                    ),
-                  )
-                ],
+                                case UserPostsEmptyState():
+                                  return const SliverToBoxAdapter(
+                                    child: Center(
+                                      child: Text('No posts'),
+                                    ),
+                                  );
+                                case UserPostsLoadedState(posts: final posts):
+                                  return SliverPadding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    sliver: SliverMasonryGrid.count(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 8,
+                                      crossAxisSpacing: 15,
+                                      childCount: posts.length,
+                                      itemBuilder: (context, index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            context.push('/post/${posts[index].postId}');
+                                          },
+                                          child: ProfilePostCard(
+                                            post: posts[index],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                default:
+                                  return const SliverToBoxAdapter(
+                                    child: Center(
+                                      child: Text('Something went wrong'),
+                                    ),
+                                  );
+                              }
+                            },
+                          );
+                       }
+                     ),
+                  ],
+                ),
               );
           }
           return const Center(

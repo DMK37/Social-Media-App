@@ -11,3 +11,9 @@ class UserPostsLoadedState extends UserPostsState {
 
   UserPostsLoadedState(this.posts);
 }
+
+class UserPostsErrorState extends UserPostsState {
+  final String message;
+
+  UserPostsErrorState(this.message);
+}

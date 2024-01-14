@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:social_media/data/models/comment_model.dart';
 import 'package:social_media/data/models/post_model.dart';
+import 'package:social_media/data/models/user_model.dart';
 
 class PostRepository {
   final _db = FirebaseFirestore.instance;
@@ -23,5 +25,21 @@ class PostRepository {
         .where('userId', isEqualTo: userId)
         .get();
     return posts.docs.map((e) => PostModel.fromSnapshot(e)).toList()..sort((a,b) => b.timestamp.compareTo(a.timestamp));
+  }
+
+  Future<List<CommentModel>> addComment(String postId, String comment, UserModel user) async {
+    final post = await getPost(postId);
+    if (post == null) {
+      throw Exception("Post not found");
+    }
+    final newComment = CommentModel(
+      comment: comment,
+      avatar: user.profileImageUrl,
+      username: user.username,
+      timestamp: DateTime.now(),
+    );
+    post.comments.add(newComment);
+    await _db.collection('posts').doc(postId).update(post.toJson());
+    return post.comments;
   }
 }
