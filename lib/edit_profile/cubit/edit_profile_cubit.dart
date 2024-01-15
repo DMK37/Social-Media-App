@@ -72,12 +72,16 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         lastName: lastName,
         about: about,
         profileImageUrl: url ?? user.profileImageUrl);
-    user = await userRepository.updateUser(user);
-    if (user != null) {
-      await authCubit.isAuthenticated();
-      emit(EditProfileSuccessState());
-    } else {
-      emit(EditProfileErrorState(errorMessage: 'update profile failed'));
+    try {
+      user = await userRepository.updateUser(user);
+      if (user != null) {
+        await authCubit.isAuthenticated();
+        emit(EditProfileSuccessState());
+      } else {
+        emit(EditProfileErrorState(errorMessage: 'update profile failed'));
+      }
+    } catch (e) {
+      emit(EditProfileErrorState(errorMessage: e.toString()));
     }
   }
 }

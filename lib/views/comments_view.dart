@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_media/components/my_text_field.dart';
-import 'package:social_media/data/models/comment_model.dart';
 import 'package:social_media/data/models/display_comment_model.dart';
 import 'package:social_media/data/models/user_model.dart';
 import 'package:social_media/post/comments/cubit/comments_cubit.dart';

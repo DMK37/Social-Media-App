@@ -33,8 +33,13 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => ThemeCubit(),
         ),
-        BlocProvider(create: (context) => CreatePostCubit(authCubit: context.read<AuthCubit>())),
-        BlocProvider(create: (context) => UserPostsCubit(authCubit: context.read<AuthCubit>()),)
+        BlocProvider(
+            create: (context) =>
+                CreatePostCubit(authCubit: context.read<AuthCubit>())),
+        BlocProvider(
+          create: (context) =>
+              ProfilePostsCubit(authCubit: context.read<AuthCubit>()),
+        )
       ],
       child: Builder(builder: (context) {
         return MaterialApp.router(

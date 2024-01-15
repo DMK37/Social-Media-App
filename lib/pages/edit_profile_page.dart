@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
 import 'package:social_media/components/edit_profile_text.dart';
+import 'package:social_media/components/error_snack_bar.dart';
 import 'package:social_media/edit_profile/cubit/edit_profile_cubit.dart';
 import 'package:social_media/edit_profile/cubit/edit_profile_state.dart';
 
@@ -34,12 +35,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
           if (state is EditProfileSuccessState) {
             context.go("/profile");
           }
+          if (state is EditProfileErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                content: ErrorSnackBar(errorMessage: state.errorMessage)));
+          }
         },
         child: Scaffold(
             appBar: AppBar(
-              leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios),
-                  onPressed: () => context.go('/profile')),
+                leading: IconButton(
+                    icon: const Icon(Icons.arrow_back_ios),
+                    onPressed: () => context.go('/profile')),
                 centerTitle: true,
                 title: const Text("Edit Profile"),
                 actions: [
@@ -83,13 +91,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return const Center(
                           child: CircularProgressIndicator(),
                         );
-                      case EditProfileErrorState(
-                          errorMessage: final errorMessage
-                        ):
-                        return Center(
-                          child: Text(errorMessage),
-                        );
-                      case EditProfileInitialState():
+
+                      case EditProfileInitialState() || EditProfileErrorState():
                         return ListView(children: [
                           const SizedBox(
                             height: 50,

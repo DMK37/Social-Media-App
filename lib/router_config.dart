@@ -13,6 +13,7 @@ import 'package:social_media/pages/post_page.dart';
 import 'package:social_media/pages/profile_page.dart';
 import 'package:social_media/pages/search_page.dart';
 import 'package:social_media/pages/signup_page.dart';
+import 'package:social_media/pages/user_page.dart';
 
 class AppRouter {
   final router = GoRouter(
@@ -82,20 +83,36 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/post/:postId',
-        pageBuilder: (context, state) {
-          return  MaterialPage(child: PostPage(postId: state.pathParameters['postId']!));
-        },
-        routes: [
-          GoRoute(
-            path: 'comments',
-            pageBuilder: (context, state) {
-              return MaterialPage(child: CommentsPage(postId: state.pathParameters['postId']!));
-            },
-          ),
-        ]
-      ),
-
+          path: '/post/:postId',
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: PostPage(postId: state.pathParameters['postId']!));
+          },
+          routes: [
+            GoRoute(
+              path: 'comments',
+              pageBuilder: (context, state) {
+                return MaterialPage(
+                    child:
+                        CommentsPage(postId: state.pathParameters['postId']!));
+              },
+            ),
+          ]),
+      GoRoute(
+          path: "/user/:username",
+          pageBuilder: (context, state) {
+            return MaterialPage(
+                child: UserPage(username: state.pathParameters['username']!));
+          },
+          redirect: (BuildContext context, GoRouterState state) {
+            final authState = context.read<AuthCubit>().state;
+            if (authState is AuthenticatedState &&
+                authState.user.username == state.pathParameters['username']) {
+              return '/profile';
+            }
+            return null;
+          }),
+          
       GoRoute(
         path: '/edit-profile',
         pageBuilder: (context, state) {

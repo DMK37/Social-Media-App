@@ -56,7 +56,7 @@ class _CreatePageState extends State<CreatePage> {
       body: BlocListener<CreatePostCubit, CreatePostState>(
         listener: (context, state) {
           if (state is CreatePostSuccessState) {
-            context.read<UserPostsCubit>().fetchPosts();
+            context.read<ProfilePostsCubit>().fetchPosts();
             descriptionController.clear();
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               behavior: SnackBarBehavior.floating,

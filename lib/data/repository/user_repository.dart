@@ -5,6 +5,9 @@ class UserRepository {
   final _db = FirebaseFirestore.instance;
 
   createUser(UserModel user) async {
+    if (await _isUsernameTaken(user.username)) {
+      throw Exception("Username already taken");
+    }
     await _db.collection('users').doc(user.userId).set(user.toJson());
   }
 
@@ -16,8 +19,32 @@ class UserRepository {
     return null;
   }
 
+  Future<UserModel?> getUserByUsername(String username) async {
+    final userSnapshot = await _db
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .limit(1)
+        .get();
+    if (userSnapshot.docs.isNotEmpty) {
+      return UserModel.fromSnapshot(userSnapshot.docs.first);
+    }
+    return null;
+  }
+
   Future<UserModel?> updateUser(UserModel user) async {
+    if (await _isUsernameTaken(user.username)) {
+      throw Exception("Username already taken");
+    }
     await _db.collection('users').doc(user.userId).update(user.toJson());
     return user;
+  }
+
+  Future<bool> _isUsernameTaken(String username) async {
+    final userSnapshot = await _db
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .limit(1)
+        .get();
+    return userSnapshot.docs.isNotEmpty;
   }
 }

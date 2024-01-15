@@ -97,7 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
               return RefreshIndicator(
                 onRefresh: () async {
                   context.read<AuthCubit>().isAuthenticated();
-                  context.read<UserPostsCubit>().fetchPosts();
+                  context.read<ProfilePostsCubit>().fetchPosts();
                 },
                 child: CustomScrollView(
                   slivers: <Widget>[
@@ -195,14 +195,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                     context.go('/edit-profile');
                                     //StatefulNavigationShell.of(context).goBranch();;
                                   },
-                                  style: Theme.of(context).textButtonTheme.style,
+                                  style:
+                                      Theme.of(context).textButtonTheme.style,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10.0),
                                     child: Text(
                                       'Edit Profile',
-                                      style:
-                                          Theme.of(context).textTheme.titleMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
                                     ),
                                   ),
                                 ),
@@ -218,56 +220,56 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SliverAppBar(
                       title: Text('Posts'),
                       pinned: true,
+                      automaticallyImplyLeading: false,
                     ),
-                     Builder(
-                       builder: (context) {
-                        context.read<UserPostsCubit>().fetchPosts();
-                         return BlocBuilder<UserPostsCubit, UserPostsState>(
-                            builder: (context, state) {
-                              switch (state) {
-                                case UserPostsLoadingState():
-                                  return const SliverToBoxAdapter(
-                                    child: Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                  );
-                                case UserPostsEmptyState():
-                                  return const SliverToBoxAdapter(
-                                    child: Center(
-                                      child: Text('No posts'),
-                                    ),
-                                  );
-                                case UserPostsLoadedState(posts: final posts):
-                                  return SliverPadding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    sliver: SliverMasonryGrid.count(
-                                      crossAxisCount: 2,
-                                      mainAxisSpacing: 8,
-                                      crossAxisSpacing: 15,
-                                      childCount: posts.length,
-                                      itemBuilder: (context, index) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            context.push('/post/${posts[index].postId}');
-                                          },
-                                          child: ProfilePostCard(
-                                            post: posts[index],
-                                          ),
-                                        );
+                    Builder(builder: (context) {
+                      context.read<ProfilePostsCubit>().fetchPosts();
+                      return BlocBuilder<ProfilePostsCubit, UserPostsState>(
+                        builder: (context, state) {
+                          switch (state) {
+                            case UserPostsLoadingState():
+                              return const SliverToBoxAdapter(
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            case UserPostsEmptyState():
+                              return const SliverToBoxAdapter(
+                                child: Center(
+                                  child: Text('No posts'),
+                                ),
+                              );
+                            case UserPostsLoadedState(posts: final posts):
+                              return SliverPadding(
+                                padding: const EdgeInsets.all(8.0),
+                                sliver: SliverMasonryGrid.count(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 8,
+                                  crossAxisSpacing: 15,
+                                  childCount: posts.length,
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        context.push(
+                                            '/post/${posts[index].postId}');
                                       },
-                                    ),
-                                  );
-                                default:
-                                  return const SliverToBoxAdapter(
-                                    child: Center(
-                                      child: Text('Something went wrong'),
-                                    ),
-                                  );
-                              }
-                            },
-                          );
-                       }
-                     ),
+                                      child: ProfilePostCard(
+                                        post: posts[index],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            default:
+                              return const SliverToBoxAdapter(
+                                child: Center(
+                                  child: Text('Something went wrong'),
+                                ),
+                              );
+                          }
+                        },
+                      );
+                    }),
                   ],
                 ),
               );

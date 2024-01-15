@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -7,7 +8,7 @@ class SearchPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: true,
           centerTitle: true,
           title: Container(
             height: 40,
@@ -19,7 +20,12 @@ class SearchPage extends StatelessWidget {
               backgroundColor: Theme.of(context).searchBarTheme.backgroundColor,
             ),
           )),
-      body: Center(child: Text('Search')),
+      body: ElevatedButton(
+        onPressed: () {
+          context.push('/user/akashi');
+        },
+        child: const Text("Go to User Page"),
+      ),
     );
   }
 }
