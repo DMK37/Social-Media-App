@@ -161,7 +161,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '0 followers',
+                                  '${user.followers.length} followers',
                                   style:
                                       Theme.of(context).textTheme.displayMedium,
                                 ),
@@ -177,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   width: 4.0,
                                 ),
                                 Text(
-                                  '0 following',
+                                  '${user.following.length} following',
                                   style:
                                       Theme.of(context).textTheme.displayMedium,
                                 ),

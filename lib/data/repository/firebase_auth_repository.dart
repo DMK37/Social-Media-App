@@ -58,6 +58,8 @@ class FirebaseAuthRepository extends AuthRepository {
             firstName: firstName,
             lastName: lastName,
             about: '',
+            followers: [],
+            following: [],
             profileImageUrl: url);
         _user.createUser(user);
         return user;
@@ -137,6 +139,8 @@ class FirebaseAuthRepository extends AuthRepository {
             firstName: firstName,
             lastName: lastName,
             about: '',
+            followers: [],
+            following: [],
             profileImageUrl: url);
         _user.createUser(user);
         return user;

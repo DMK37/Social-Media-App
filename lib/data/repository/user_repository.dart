@@ -47,4 +47,26 @@ class UserRepository {
         .get();
     return userSnapshot.docs.isNotEmpty;
   }
+
+  Future<void> followUser(String userId, String followUserId) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .update({'following': FieldValue.arrayUnion([followUserId])});
+    await _db
+        .collection('users')
+        .doc(followUserId)
+        .update({'followers': FieldValue.arrayUnion([userId])});
+  }
+
+  Future<void> unfollowUser(String userId, String unfollowUserId) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .update({'following': FieldValue.arrayRemove([unfollowUserId])});
+    await _db
+        .collection('users')
+        .doc(unfollowUserId)
+        .update({'followers': FieldValue.arrayRemove([userId])});
+  }
 }

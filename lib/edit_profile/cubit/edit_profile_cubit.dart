@@ -71,6 +71,8 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         firstName: firstName,
         lastName: lastName,
         about: about,
+        followers: user.followers,
+        following: user.following,
         profileImageUrl: url ?? user.profileImageUrl);
     try {
       user = await userRepository.updateUser(user);

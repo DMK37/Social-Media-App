@@ -4,9 +4,11 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
+import 'package:social_media/auth/cubit/auth_state.dart';
 import 'package:social_media/components/profile_post_card.dart';
 import 'package:social_media/data/models/post_model.dart';
 import 'package:social_media/data/models/user_model.dart';
+import 'package:social_media/data/users/cubit/users_cubit.dart';
 
 class UserView extends StatelessWidget {
   final UserModel user;
@@ -26,6 +28,7 @@ class UserView extends StatelessWidget {
         body: RefreshIndicator(
           onRefresh: () async {
             context.read<AuthCubit>().isAuthenticated();
+            context.read<UserCubit>().getUser();
           },
           child: CustomScrollView(
             slivers: <Widget>[
@@ -86,7 +89,7 @@ class UserView extends StatelessWidget {
                     ),
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                       Text(
-                        '0 followers',
+                        '${user.followers.length} followers',
                         style: Theme.of(context).textTheme.displayMedium,
                       ),
                       const SizedBox(
@@ -100,7 +103,7 @@ class UserView extends StatelessWidget {
                         width: 4.0,
                       ),
                       Text(
-                        '0 following',
+                        '${user.following.length} following',
                         style: Theme.of(context).textTheme.displayMedium,
                       ),
                     ]),
@@ -114,14 +117,30 @@ class UserView extends StatelessWidget {
                           width: 120,
                           child: TextButton(
                             onPressed: () {
-                              //context.go('/edit-profile');
-                              
+                              String userId = (context.read<AuthCubit>().state
+                                      as AuthenticatedState)
+                                  .user
+                                  .userId!;
+                              user.followers.contains(userId)
+                                  ? context
+                                      .read<UserCubit>()
+                                      .unfollowUser(userId)
+                                  : context
+                                      .read<UserCubit>()
+                                      .followUser(userId);
                             },
                             style: Theme.of(context).textButtonTheme.style,
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 4.0),
                               child: Text(
+                                user.followers.contains(
+                                        (context.read<AuthCubit>().state
+                                                as AuthenticatedState)
+                                            .user
+                                            .userId!)
+                                    ? 'Unfollow'
+                                    :
                                 'Follow',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),

@@ -30,12 +30,43 @@ class UserCubit extends Cubit<UserState> {
     emit(UserLoadingState());
     try {
       final user = await userRepository.getUserByUsername(username);
-
       if (user == null) {
         emit(UserErrorState("User not found"));
         return;
       }
       final posts = await postRepository.getPosts(user.userId!);
+      emit(UserLoadedState(user, posts));
+    } catch (e) {
+      emit(UserErrorState(e.toString()));
+    }
+  }
+
+  Future<void> followUser(String userId) async {
+    if (state is! UserLoadedState) {
+      return;
+    }
+    final user = (state as UserLoadedState).user;
+    final posts = (state as UserLoadedState).posts;
+    //emit(UserLoadingState());
+    try {
+      await userRepository.followUser(userId, user.userId!);
+      user.followers.add(userId);
+      emit(UserLoadedState(user, posts));
+    } catch (e) {
+      emit(UserErrorState(e.toString()));
+    }
+  }
+
+  Future<void> unfollowUser(String userId) async {
+    if (state is! UserLoadedState) {
+      return;
+    }
+    final user = (state as UserLoadedState).user;
+    final posts = (state as UserLoadedState).posts;
+    //emit(UserLoadingState());
+    try {
+      await userRepository.unfollowUser(userId, user.userId!);
+      user.followers.remove(userId);
       emit(UserLoadedState(user, posts));
     } catch (e) {
       emit(UserErrorState(e.toString()));

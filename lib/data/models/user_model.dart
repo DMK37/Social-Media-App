@@ -8,6 +8,8 @@ class UserModel {
   final String username;
   final String about;
   final String profileImageUrl;
+  final List<String> followers;
+  final List<String> following;
 
   const UserModel({
     this.userId,
@@ -17,6 +19,8 @@ class UserModel {
     required this.lastName,
     required this.about,
     required this.profileImageUrl,
+    required this.followers,
+    required this.following,
   });
 
   toJson() => {
@@ -26,6 +30,8 @@ class UserModel {
         'lastName': lastName,
         'about': about,
         'profileImageUrl': profileImageUrl,
+        'followers': followers,
+        'following': following,
       };
 
   getFullName() {
@@ -42,6 +48,8 @@ class UserModel {
       firstName: data['firstName'],
       lastName: data['lastName'],
       about: data['about'],
+      followers: List<String>.from(data['followers']),
+      following: List<String>.from(data['following']),
       profileImageUrl: data['profileImageUrl'],
     );
   }
