@@ -22,7 +22,7 @@ class SearchPage extends StatelessWidget {
           )),
       body: ElevatedButton(
         onPressed: () {
-          context.push('/user/akashi');
+          context.push('/user/psycho');
         },
         child: const Text("Go to User Page"),
       ),

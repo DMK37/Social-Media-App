@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:social_media/auth/cubit/auth_cubit.dart';
 import 'package:social_media/auth/cubit/auth_state.dart';
 import 'package:social_media/components/profile_post_card.dart';
-import 'package:social_media/data/models/post_model.dart';
+import 'package:social_media/home/cubit/home_cubit.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -34,42 +34,50 @@ class HomePage extends StatelessWidget {
                   width: 50,
                 ),
               ),
-              body: MasonryGridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 20,
-                itemBuilder: (context, index) {
-                  //return const PostCard(post: PostModel(),);
-                  return Text("qq");
-                },
+              body: BlocProvider(
+                create: (context) => HomeCubit(
+                    (context.read<AuthCubit>().state as AuthenticatedState)
+                        .user)
+                  ..getPosts(),
+                child: BlocBuilder<HomeCubit, HomeState>(
+                    builder: (context, state) {
+                  switch (state) {
+                    case HomeLoadingState():
+                      return const Center(child: CircularProgressIndicator());
+                    case HomeLoadedState(posts: final posts):
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<AuthCubit>().isAuthenticated();
+                          context.read<HomeCubit>().getPosts();
+                        },
+                        child: MasonryGridView.count(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 15,
+                          itemCount: posts.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                context.push('/post/${posts[index].postId}');
+                              },
+                              child: ProfilePostCard(
+                                post: posts[index],
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    case HomeErrorState(errorMessage: final errorMessage):
+                      return Center(child: Text(errorMessage));
+                    default:
+                      return const SizedBox.shrink();
+                  }
+                }),
               ),
             );
           }
           return const SizedBox.shrink();
         },
-      ),
-    );
-  }
-}
-
-class Tile extends StatelessWidget {
-  final int index;
-  final double extent;
-
-  Tile({required this.index, required this.extent});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      child: SizedBox(
-        height: extent,
-        width: extent,
-        child: Center(
-          child: Text(
-            'Tile $index',
-            style: TextStyle(fontSize: 24),
-          ),
-        ),
       ),
     );
   }

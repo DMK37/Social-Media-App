@@ -41,4 +41,14 @@ class PostRepository {
     await _db.collection('posts').doc(postId).update(post.toJson());
     return post.comments;
   }
+
+  Future<List<PostModel>> getPostsFromFollowing(List<String> following) async {
+    final posts = await _db
+        .collection('posts')
+        .where('userId', whereIn: following)
+        .orderBy('timestamp', descending: true)
+        .limit(50)
+        .get();
+    return posts.docs.map((e) => PostModel.fromSnapshot(e)).toList();
+  }
 }
