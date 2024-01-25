@@ -1,16 +1,33 @@
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:social_media/data/models/post_model.dart';
 import 'package:social_media/data/models/user_model.dart';
+import 'package:social_media/post/cubit/post_cubit.dart';
 
-class PostView extends StatelessWidget {
+class PostView extends StatefulWidget {
   final PostModel post;
   final UserModel user;
   const PostView({super.key, required this.post, required this.user});
 
+
+  @override
+  State<PostView> createState() => _PostViewState();
+}
+
+class _PostViewState extends State<PostView> {
+ bool isLiked = false;
+  @override
+  void initState() {
+    super.initState();
+    isLiked = widget.post.likes.contains(widget.user.userId);
+  }
   @override
   Widget build(BuildContext context) {
+    
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: ListView(
@@ -20,54 +37,82 @@ class PostView extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(user.profileImageUrl),
+                  GestureDetector(
+                    onTap: () => context.push("/user/${widget.user.username}"),
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(widget.user.profileImageUrl),
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    user.username,
-                    style: Theme.of(context).textTheme.headlineMedium,
+                  GestureDetector(
+                    onTap: () => context.push("/user/${widget.user.username}"),
+                    child: Text(
+                      widget.user.username,
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
                   ),
                   const Spacer(),
-                  IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.more_horiz_rounded))
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 5,
             ),
             ClipRRect(
               //height: MediaQuery.of(context).size.height * 0.35,
               borderRadius: BorderRadius.circular(20),
-              child: Image.network(post.imageUrl, fit: BoxFit.cover),
+              child: Image.network(widget.post.imageUrl, fit: BoxFit.cover),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 children: [
-                  IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.favorite_outline)),
+                  Builder(
+                    builder: (context) {
+                      return IconButton(
+                          onPressed: () {
+                            if (isLiked) {
+                              context.read<PostCubit>().unlikePost();
+                              widget.post.likes.remove(widget.user.userId);
+                              setState(() {
+                                isLiked = false;
+                              });
+                            } else {
+                              context.read<PostCubit>().likePost();
+                              widget.post.likes.add(widget.user.userId!);
+                              setState(() {
+                                isLiked = true;
+                              });
+                            }
+                          },
+                          icon: isLiked
+                              ? const Icon(
+                                  FontAwesomeIcons.solidHeart,
+                                  color: Colors.red,
+                                )
+                              : const Icon(FontAwesomeIcons.heart));
+                    }
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: Text(
-                      "123",
+                    child: Text( 
+                      widget.post.likes.length.toString(),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ),
                   IconButton(
-                      onPressed: () {context.push("/post/${post.postId}/comments");},
+                      onPressed: () {
+                        context.push("/post/${widget.post.postId}/comments");
+                      },
                       icon: const Icon(FontAwesomeIcons.comment)),
                   Text(
-                    post.comments.length.toString(),
+                    widget.post.comments.length.toString(),
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  const Spacer(),
-                  IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.bookmark_border_outlined)),
+                  //const Spacer(),
                 ],
               ),
             ),
@@ -76,7 +121,7 @@ class PostView extends StatelessWidget {
             ),
             Center(
                 child: Text(
-              post.description,
+              widget.post.description,
               style: Theme.of(context).textTheme.headlineMedium,
             )),
             const SizedBox(
@@ -85,7 +130,7 @@ class PostView extends StatelessWidget {
             Wrap(
               alignment: WrapAlignment.center,
               children: [
-                for (var tag in post.tags)
+                for (var tag in widget.post.tags)
                   Container(
                       margin: const EdgeInsets.symmetric(
                           horizontal: 5, vertical: 4),
@@ -111,7 +156,7 @@ class PostView extends StatelessWidget {
               height: 10,
             ),
             Text(
-              "${post.timestamp.day}/${post.timestamp.month}/${post.timestamp.year}",
+              "${widget.post.timestamp.day}/${widget.post.timestamp.month}/${widget.post.timestamp.year}",
               style: const TextStyle(color: Colors.grey, fontSize: 17),
               textAlign: TextAlign.center,
             )

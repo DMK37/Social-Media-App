@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:social_media/components/my_text_field.dart';
 import 'package:social_media/data/models/display_comment_model.dart';
 import 'package:social_media/data/models/user_model.dart';
@@ -24,6 +25,12 @@ class _CommentsViewState extends State<CommentsView> {
   TextEditingController commentController = TextEditingController();
 
   @override
+  void dispose() {
+    commentController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Comments")),
@@ -33,19 +40,26 @@ class _CommentsViewState extends State<CommentsView> {
           itemCount: widget.comments.length,
           itemBuilder: (context, index) => Row(
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundImage: NetworkImage(widget.comments[index].avatar),
+              GestureDetector(
+                onTap: () => context.push("/user/${widget.comments[index].username}"),
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundImage: NetworkImage(widget.comments[index].avatar),
+                ),
               ),
               Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        widget.comments[index].username,
-                        style: Theme.of(context).textTheme.titleSmall,
+                      GestureDetector(
+                        onTap: () => context.push("/user/${widget.comments[index].username}"),
+                        child: Text(
+                          widget.comments[index].username,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
                       ),
                       Text(widget.comments[index].comment,
                           style: Theme.of(context).textTheme.bodyMedium)
@@ -79,7 +93,7 @@ class _CommentsViewState extends State<CommentsView> {
                         if (commentController.text.isNotEmpty) {
                           context.read<CommentsCubit>().addComment(
                               widget.postId,
-                              commentController.text,
+                              commentController.text.trim(),
                               widget.user);
                         }
                       },

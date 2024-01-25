@@ -23,14 +23,19 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit(this.user) : super(HomeLoadingState());
   final PostRepository postRepository = PostRepository();
 
-  Future<void> getPosts() async {
+  Future<void> getPosts(String tag) async {
     emit(HomeLoadingState());
     try {
       if(user.following.isEmpty) {
         emit(HomeLoadedState([]));
         return;
       }
-      final posts = await postRepository.getPostsFromFollowing(user.following);
+      List<PostModel> posts = [];
+      if(tag == "All") {
+        posts = await postRepository.getPostsFromFollowing(user.following);
+      } else {
+        posts = await postRepository.getPostsWithTag(tag, user.following);
+      }
       emit(HomeLoadedState(posts));
     } catch (e) {
       emit(HomeErrorState(e.toString()));

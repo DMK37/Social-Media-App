@@ -243,7 +243,7 @@ class _CreatePageState extends State<CreatePage> {
                       onPressed: () {
                         context
                             .read<CreatePostCubit>()
-                            .createPost(descriptionController.text);
+                            .createPost(descriptionController.text.trim());
                       },
                       child: const Text('Create Post')),
                 ],

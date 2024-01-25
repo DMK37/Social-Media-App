@@ -55,10 +55,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     return IconButton(
                       onPressed: () async {
                         await context.read<EditProfileCubit>().updateProfile(
-                            firstNameController.text,
-                            lastNameController.text,
-                            usernameController.text,
-                            aboutController.text);
+                            firstNameController.text.trim(),
+                            lastNameController.text.trim(),
+                            usernameController.text.trim(),
+                            aboutController.text.trim());
                       },
                       icon: const Icon(Icons.check),
                       color: Theme.of(context).colorScheme.primary,

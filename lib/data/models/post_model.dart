@@ -7,7 +7,7 @@ class PostModel {
   final String imageUrl;
   final String description;
   final List<CommentModel> comments;
-  //final List<String> likedBy;
+  final List<String> likes;
   final List<String> tags;
   final DateTime timestamp;
   PostModel({
@@ -16,7 +16,7 @@ class PostModel {
     required this.imageUrl,
     required this.description,
     required this.comments,
-    //required this.likedBy,
+    required this.likes,
     required this.tags,
     required this.timestamp,
   });
@@ -25,7 +25,7 @@ class PostModel {
         'userId': userId,
         'imageUrl': imageUrl,
         'description': description,
-        //'likedBy': likedBy,
+        'likes': likes,
         'comments': comments.map((e) => e.toJson()).toList(),
         'tags': tags,
         'timestamp': timestamp,
@@ -40,7 +40,7 @@ class PostModel {
       imageUrl: data['imageUrl'],
       description: data['description'],
       comments: List<CommentModel>.from(data['comments'].map((e) => CommentModel.fromMap(e))),
-      //likedBy: data['likedBy'],
+      likes: List<String>.from(data['likes']),
       tags: List<String>.from(data['tags']),
       timestamp: data['timestamp'].toDate(),
     );
@@ -52,7 +52,7 @@ class PostModel {
       imageUrl: data['imageUrl'],
       description: data['description'],
       comments: List<CommentModel>.from(data['comments'].map((e) => CommentModel.fromMap(e))),
-      //likedBy: data['likedBy'],
+      likes: List<String>.from(data['likes']),
       tags: List<String>.from(data['tags']),
       timestamp: data['timestamp'].toDate(),
     );

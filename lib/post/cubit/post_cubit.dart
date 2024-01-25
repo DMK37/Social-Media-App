@@ -10,19 +10,55 @@ class PostCubit extends Cubit<PostState> {
   PostRepository postRepository = PostRepository();
   UserRepository  userRepository = UserRepository();
   PostCubit(this.postId) : super(PostLoadingState());
+  PostModel? post;
 
-  void fetchPost() async {
+  Future<void> fetchPost() async {
     emit(PostLoadingState());
-    final PostModel? post = await postRepository.getPost(postId);
+    post = await postRepository.getPost(postId);
     if (post == null) {
       emit(PostErrorState('Post not found'));
     } else {
-      final UserModel? user = await userRepository.getUser(post.userId);
+      final UserModel? user = await userRepository.getUser(post!.userId);
       if (user == null) {
         emit(PostErrorState('User not found'));
         return;
       }
-      emit(PostLoadedState(post, user));
+      emit(PostLoadedState(post!, user));
     }
   }
+
+  Future<void> likePost() async {
+    if (post == null) {
+      return;
+    }
+    try {
+      await postRepository.likePost(postId, post!.userId);
+      final UserModel? user = await userRepository.getUser(post!.userId);
+      if (user == null) {
+        emit(PostErrorState('User not found'));
+        return;
+      }
+      emit(PostLoadedState(post!, user));
+    } catch (e) {
+      PostErrorState(e.toString());
+    }
+  }
+
+  Future<void> unlikePost() async {
+    if (post == null) {
+      return;
+    }
+    try {
+      await postRepository.unlikePost(postId, post!.userId);
+      final UserModel? user = await userRepository.getUser(post!.userId);
+      if (user == null) {
+        emit(PostErrorState('User not found'));
+        return;
+      }
+      emit(PostLoadedState(post!, user));
+    } catch (e) {
+      PostErrorState(e.toString());
+    }
+  }
+
 }

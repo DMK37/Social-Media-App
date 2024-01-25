@@ -104,6 +104,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       description: description,
       imageUrl: '',
       comments: [],
+      likes: [],
       tags: selectedTags ?? [],
       timestamp: DateTime.now(),
     );
@@ -116,6 +117,7 @@ class CreatePostCubit extends Cubit<CreatePostState> {
       userId: user.userId!,
       description: postModel.description,
       imageUrl: url,
+      likes: postModel.likes,
       comments: postModel.comments,
       tags: postModel.tags,
       timestamp: postModel.timestamp,

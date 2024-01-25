@@ -5,7 +5,7 @@ class UserRepository {
   final _db = FirebaseFirestore.instance;
 
   createUser(UserModel user) async {
-    if (await _isUsernameTaken(user.username)) {
+    if (await _isUsernameTaken(user.username) != null) {
       throw Exception("Username already taken");
     }
     await _db.collection('users').doc(user.userId).set(user.toJson());
@@ -32,41 +32,53 @@ class UserRepository {
   }
 
   Future<UserModel?> updateUser(UserModel user) async {
-    if (await _isUsernameTaken(user.username)) {
+    final u = await _isUsernameTaken(user.username);
+    if (u != null && u.userId != user.userId) {
       throw Exception("Username already taken");
     }
     await _db.collection('users').doc(user.userId).update(user.toJson());
     return user;
   }
 
-  Future<bool> _isUsernameTaken(String username) async {
+  Future<UserModel?> _isUsernameTaken(String username) async {
     final userSnapshot = await _db
         .collection('users')
         .where('username', isEqualTo: username)
         .limit(1)
         .get();
-    return userSnapshot.docs.isNotEmpty;
+    return userSnapshot.docs.isNotEmpty
+        ? UserModel.fromSnapshot(userSnapshot.docs.first)
+        : null;
   }
 
   Future<void> followUser(String userId, String followUserId) async {
-    await _db
-        .collection('users')
-        .doc(userId)
-        .update({'following': FieldValue.arrayUnion([followUserId])});
-    await _db
-        .collection('users')
-        .doc(followUserId)
-        .update({'followers': FieldValue.arrayUnion([userId])});
+    await _db.collection('users').doc(userId).update({
+      'following': FieldValue.arrayUnion([followUserId])
+    });
+    await _db.collection('users').doc(followUserId).update({
+      'followers': FieldValue.arrayUnion([userId])
+    });
   }
 
   Future<void> unfollowUser(String userId, String unfollowUserId) async {
-    await _db
+    await _db.collection('users').doc(userId).update({
+      'following': FieldValue.arrayRemove([unfollowUserId])
+    });
+    await _db.collection('users').doc(unfollowUserId).update({
+      'followers': FieldValue.arrayRemove([userId])
+    });
+  }
+
+  Future<List<UserModel>> searchUser(String username) async {
+    final userSnapshot = await _db
         .collection('users')
-        .doc(userId)
-        .update({'following': FieldValue.arrayRemove([unfollowUserId])});
-    await _db
-        .collection('users')
-        .doc(unfollowUserId)
-        .update({'followers': FieldValue.arrayRemove([userId])});
+        .where('username', isGreaterThanOrEqualTo: username)
+        .where('username', isLessThan: '${username}z')
+        .limit(20)
+        .get();
+    if (userSnapshot.docs.isNotEmpty) {
+      return userSnapshot.docs.map((e) => UserModel.fromSnapshot(e)).toList();
+    }
+    return [];
   }
 }

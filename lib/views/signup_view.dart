@@ -27,6 +27,17 @@ class _SignUpViewState extends State<SignUpView> {
   final confirmPasswordController = TextEditingController();
 
   @override
+  void dispose() {
+    usernameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: ListView(
@@ -115,11 +126,11 @@ class _SignUpViewState extends State<SignUpView> {
               return MyButton(
                 onTap: () {
                   context.read<AuthCubit>().signUp(
-                      emailController.text,
-                      passwordController.text,
-                      firstNameController.text,
-                      lastNameController.text,
-                      usernameController.text);
+                      emailController.text.trim(),
+                      passwordController.text.trim(),
+                      firstNameController.text.trim(),
+                      lastNameController.text.trim(),
+                      usernameController.text.trim());
                   //context.go('/');
                 },
                 text: "Sign Up",

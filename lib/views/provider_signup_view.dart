@@ -19,6 +19,14 @@ class _ProviderSignUpView extends State<ProviderSignUpView> {
   final lastNameController = TextEditingController();
 
   @override
+  void dispose() {
+    usernameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: SafeArea(
@@ -84,9 +92,9 @@ class _ProviderSignUpView extends State<ProviderSignUpView> {
             return MyButton(
               onTap: () {
                 context.read<AuthCubit>().continueProviderSignUp(
-                    firstNameController.text,
-                    lastNameController.text,
-                    usernameController.text);
+                    firstNameController.text.trim(),
+                    lastNameController.text.trim(),
+                    usernameController.text.trim());
               },
               text: "Sign Up",
             );
