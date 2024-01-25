@@ -27,12 +27,12 @@ class PostCubit extends Cubit<PostState> {
     }
   }
 
-  Future<void> likePost() async {
+  Future<void> likePost(String userId) async {
     if (post == null) {
       return;
     }
     try {
-      await postRepository.likePost(postId, post!.userId);
+      await postRepository.likePost(postId, userId);
       final UserModel? user = await userRepository.getUser(post!.userId);
       if (user == null) {
         emit(PostErrorState('User not found'));
@@ -44,12 +44,12 @@ class PostCubit extends Cubit<PostState> {
     }
   }
 
-  Future<void> unlikePost() async {
+  Future<void> unlikePost(String userId) async {
     if (post == null) {
       return;
     }
     try {
-      await postRepository.unlikePost(postId, post!.userId);
+      await postRepository.unlikePost(postId, userId);
       final UserModel? user = await userRepository.getUser(post!.userId);
       if (user == null) {
         emit(PostErrorState('User not found'));

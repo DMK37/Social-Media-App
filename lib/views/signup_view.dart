@@ -106,19 +106,7 @@ class _SignUpViewState extends State<SignUpView> {
               hintText: 'Confirm Password',
               obscureText: true,
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('Forgot Your Password?',
-                      style: TextStyle(color: Colors.grey[600]))
-                ],
-              ),
-            ),
+            
             const SizedBox(
               height: 25,
             ),

@@ -1,9 +1,9 @@
-import 'dart:isolate';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:social_media/auth/cubit/auth_cubit.dart';
+import 'package:social_media/auth/cubit/auth_state.dart';
 import 'package:social_media/data/models/post_model.dart';
 import 'package:social_media/data/models/user_model.dart';
 import 'package:social_media/post/cubit/post_cubit.dart';
@@ -13,21 +13,21 @@ class PostView extends StatefulWidget {
   final UserModel user;
   const PostView({super.key, required this.post, required this.user});
 
-
   @override
   State<PostView> createState() => _PostViewState();
 }
 
 class _PostViewState extends State<PostView> {
- bool isLiked = false;
+  bool isLiked = false;
   @override
   void initState() {
     super.initState();
-    isLiked = widget.post.likes.contains(widget.user.userId);
+    isLiked = widget.post.likes.contains(
+        (context.read<AuthCubit>().state as AuthenticatedState).user.userId!);
   }
+
   @override
   Widget build(BuildContext context) {
-    
     return Container(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: ListView(
@@ -41,7 +41,8 @@ class _PostViewState extends State<PostView> {
                     onTap: () => context.push("/user/${widget.user.username}"),
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundImage: NetworkImage(widget.user.profileImageUrl),
+                      backgroundImage:
+                          NetworkImage(widget.user.profileImageUrl),
                     ),
                   ),
                   const SizedBox(
@@ -70,35 +71,49 @@ class _PostViewState extends State<PostView> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Row(
                 children: [
-                  Builder(
-                    builder: (context) {
-                      return IconButton(
-                          onPressed: () {
-                            if (isLiked) {
-                              context.read<PostCubit>().unlikePost();
-                              widget.post.likes.remove(widget.user.userId);
-                              setState(() {
-                                isLiked = false;
-                              });
-                            } else {
-                              context.read<PostCubit>().likePost();
-                              widget.post.likes.add(widget.user.userId!);
-                              setState(() {
-                                isLiked = true;
-                              });
-                            }
-                          },
-                          icon: isLiked
-                              ? const Icon(
-                                  FontAwesomeIcons.solidHeart,
-                                  color: Colors.red,
-                                )
-                              : const Icon(FontAwesomeIcons.heart));
-                    }
-                  ),
+                  Builder(builder: (context) {
+                    return IconButton(
+                        onPressed: () {
+                          if (isLiked) {
+                            context.read<PostCubit>().unlikePost((context
+                                    .read<AuthCubit>()
+                                    .state as AuthenticatedState)
+                                .user
+                                .userId!);
+                            widget.post.likes.remove((context
+                                    .read<AuthCubit>()
+                                    .state as AuthenticatedState)
+                                .user
+                                .userId!);
+                            setState(() {
+                              isLiked = false;
+                            });
+                          } else {
+                            context.read<PostCubit>().likePost((context
+                                    .read<AuthCubit>()
+                                    .state as AuthenticatedState)
+                                .user
+                                .userId!);
+                            widget.post.likes.add((context
+                                    .read<AuthCubit>()
+                                    .state as AuthenticatedState)
+                                .user
+                                .userId!);
+                            setState(() {
+                              isLiked = true;
+                            });
+                          }
+                        },
+                        icon: isLiked
+                            ? const Icon(
+                                FontAwesomeIcons.solidHeart,
+                                color: Colors.red,
+                              )
+                            : const Icon(FontAwesomeIcons.heart));
+                  }),
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: Text( 
+                    child: Text(
                       widget.post.likes.length.toString(),
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
