@@ -1,29 +1,14 @@
 # PhotoCraft
 
+Test user: 
+ - mail: france@gmail.com
+ - password: qpwoeiru
+
 ## Overview
 
 ### A social networking application for photographers and graphic designers.
  
 The app allows you to showcase your portfolio, connect with like-minded creatives, get valuable feedback or share your own opinion.
- 
-### Screens:
-- Home screen: displayed list of recent posts of users you subscribe to.
-- User Profile, with a description and all posts by that user.
-- Post page, with the ability to like and comment.
-- Login and new user registration pages.
-- A page with searching for other users.
-- A page with creating new posts.
-
-### As a user, I can:
-- See my friends' recent posts.
-- Create my own posts (from photos or camera).
-- Be able to login/register with email and password or Google, Facebook, Apple account.
-- Filter posts by type.
-- Modify profile description.
-- Search for other users.
-- Comment and like.
-- Follow friends
-
 
 ## Project Structure
 ### Overview
@@ -63,5 +48,20 @@ The app allows you to showcase your portfolio, connect with like-minded creative
      - userId: String 
 
   ## User Guide
-   ### User Sign in/ Sign up
-   - 
+   ### Sign in/ Sign up
+   - User can sign in using mail, Google or Facebook account
+   - User can sign up, he should provide additionaly his name and username
+   - When user signing up using Google or Facebook he should provide additionaly his name and username after provider flow
+   ### Home Page
+   - Home Page displays posts from users we are following
+   - We can filter posts by tag
+   ### Search Page
+   - User can search for specific users by their username. Result of search is usernames which start with provided sequence
+   ### Create Post Page
+   - Create Post Page allows to create new post. We should add photo from gallery or camera, description and tags. Also, we can cropp image.
+   ### Profile/User Page
+   - Displays information about user such as his name, username, about section, number of follows and following, posts of that user. We can start following/unfollowing user
+   ### Edit Profile Page
+   - Allows to edit information about user and also his profile image
+   ### Post page
+   - Post page displays post information. We can like post and comment.
