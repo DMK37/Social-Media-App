@@ -10,7 +10,15 @@ Test user:
  
 The app allows you to showcase your portfolio, connect with like-minded creatives, get valuable feedback or share your own opinion.
 
+<img src="https://github.com/DMK37/Social-Media-App/assets/119494305/44b0a07c-676b-4dc2-9923-48620a7a0929" width="400"/>
+<img src="https://github.com/DMK37/Social-Media-App/assets/119494305/a1d60af3-7c12-4cb0-a053-4b764a27b598" width="400"/>
+
+
+<img src="https://github.com/DMK37/Social-Media-App/assets/119494305/e7c0659a-1f83-4b11-b13c-e392966c89d1" width="400"/>
+<img src="https://github.com/DMK37/Social-Media-App/assets/119494305/8c32b6a6-a55e-4e34-a466-2b15d1b36d61" width="400"/>
+
 ## Project Structure
+
 ### Overview
 - Project was built using BLOC pattern (Cubit), routing (Go Router), Firebase services such as Authentication, Firestore Database and Storage, image_picker and image_cropper for taking and cropping photos.
 - Almost for each page there is specific Cubit which manages states and fetches data. Some of them are created at main.dart such as AuthCubit and some are created on the page level.
